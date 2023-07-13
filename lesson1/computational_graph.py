@@ -1,10 +1,11 @@
 # -*- coding:utf-8 -*-
 
 import torch
+
 w = torch.tensor([1.], requires_grad=True)
 x = torch.tensor([2.], requires_grad=True)
 # y=(x+w)*(w+1)
-a = torch.add(w, x)     # retain_grad()
+a = torch.add(w, x)  # retain_grad()
 b = torch.add(w, 1)
 y = torch.mul(a, b)
 # y 求导
@@ -24,4 +25,3 @@ print("x.grad_fn = ", x.grad_fn)
 print("a.grad_fn = ", a.grad_fn)
 print("b.grad_fn = ", b.grad_fn)
 print("y.grad_fn = ", y.grad_fn)
-

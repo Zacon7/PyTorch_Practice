@@ -2,6 +2,7 @@
 
 import torch
 import numpy as np
+
 torch.manual_seed(1)
 
 # ===============================  exmaple 1 ===============================
@@ -14,7 +15,7 @@ if flag:
     print("ndarray的数据类型：", arr.dtype)
     # 创建存放在 GPU 的数据
     # t = torch.tensor(arr, device='cuda')
-    t= torch.tensor(arr)
+    t = torch.tensor(arr)
     print(t)
 # ===============================  exmaple 2 ===============================
 # 通过torch.from_numpy创建张量
@@ -56,7 +57,6 @@ if flag:
     t = torch.full((3, 3), 1)
     print(t)
 
-
 # ===============================  exmaple 5 ===============================
 # 通过torch.arange创建等差数列张量
 # flag = True
@@ -79,7 +79,6 @@ if flag:
 flag = True
 # flag = False
 if flag:
-
     # mean：张量 std: 张量
     # mean = torch.arange(1, 5, dtype=torch.float)
     # std = torch.arange(1, 5, dtype=torch.float)
@@ -98,15 +97,3 @@ if flag:
     t_normal = torch.normal(mean, std)
     print("mean:{}\nstd:{}".format(mean, std))
     print(t_normal)
-
-
-
-
-
-
-
-
-
-
-
-

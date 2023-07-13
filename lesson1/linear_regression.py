@@ -2,6 +2,7 @@
 
 import torch
 import matplotlib.pyplot as plt
+
 torch.manual_seed(10)
 
 lr = 0.05  # 学习率
@@ -9,11 +10,11 @@ lr = 0.05  # 学习率
 # 创建训练数据
 x = torch.rand(20, 1) * 10  # x data (tensor), shape=(20, 1)
 # torch.randn(20, 1) 用于添加噪声
-y = 2*x + (5 + torch.randn(20, 1))  # y data (tensor), shape=(20, 1)
+y = 2 * x + 5 + torch.randn(20, 1)  # y data (tensor), shape=(20, 1)
 
 # 构建线性回归参数
-w = torch.randn((1), requires_grad=True) # 设置梯度求解为 true
-b = torch.zeros((1), requires_grad=True) # 设置梯度求解为 true
+w = torch.randn((1,), requires_grad=True)  # 设置梯度求解为 true
+b = torch.zeros((1,), requires_grad=True)  # 设置梯度求解为 true
 
 # 迭代训练 1000 次
 for iteration in range(1000):
@@ -41,11 +42,11 @@ for iteration in range(1000):
 
         plt.scatter(x.data.numpy(), y.data.numpy())
         plt.plot(x.data.numpy(), y_pred.data.numpy(), 'r-', lw=5)
-        plt.text(2, 20, 'Loss=%.4f' % loss.data.numpy(), fontdict={'size': 20, 'color':  'red'})
+        plt.text(2, 20, 'Loss=%.4f' % loss.data.numpy(), fontdict={'size': 20, 'color': 'red'})
         plt.xlim(1.5, 10)
         plt.ylim(8, 28)
         plt.title("Iteration: {}\nw: {} b: {}".format(iteration, w.data.numpy(), b.data.numpy()))
-        plt.pause(0.5)
+        plt.show()
 
         # 如果 MSE 小于 1，则停止训练
         if loss.data.numpy() < 1:
