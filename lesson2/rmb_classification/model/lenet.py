@@ -4,12 +4,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
 
+
 class LeNet(nn.Module):
     # 子模块创建
     def __init__(self, classes):
-        super(LeNet, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.conv2 = nn.Conv2d(6, 16, 5)
+        self.flatten = nn.Flatten()
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, classes)
@@ -20,7 +22,8 @@ class LeNet(nn.Module):
         out = F.max_pool2d(out, 2)
         out = F.relu(self.conv2(out))
         out = F.max_pool2d(out, 2)
-        out = out.view(out.size(0), -1)
+        out = self.flatten(out)
+        # out = out.view(out.size(0), -1)
         out = F.relu(self.fc1(out))
         out = F.relu(self.fc2(out))
         out = self.fc3(out)
@@ -40,9 +43,9 @@ class LeNet(nn.Module):
                 m.bias.data.zero_()
 
 
-class LeNetSequetial(nn.Module):
+class LeNetSequential(nn.Module):
     def __init__(self, classes):
-        super(LeNetSequetial, self).__init__()
+        super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 6, 5),
             nn.ReLU(),
@@ -52,7 +55,7 @@ class LeNetSequetial(nn.Module):
             nn.MaxPool2d(2, 2)
         )
         self.classifier = nn.Sequential(
-            nn.Linear(16*5*5, 120),
+            nn.Linear(16 * 5 * 5, 120),
             nn.ReLU(),
             nn.Linear(120, 84),
             nn.ReLU(),
@@ -61,7 +64,8 @@ class LeNetSequetial(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size()[0], -1)
+        # x = x.view(x.size()[0], -1)
+        x = nn.Flatten()(x)
         x = self.classifier(x)
         return x
 
@@ -78,10 +82,10 @@ class LeNetSequetial(nn.Module):
                 nn.init.normal_(m.weight.data, 0, 0.1)
                 m.bias.data.zero_()
 
+
 class LeNetSequentialOrderDict(nn.Module):
     def __init__(self, classes):
-        super(LeNetSequentialOrderDict, self).__init__()
-
+        super().__init__()
         self.features = nn.Sequential(OrderedDict({
             'conv1': nn.Conv2d(3, 6, 5),
             'relu1': nn.ReLU(inplace=True),
@@ -93,7 +97,7 @@ class LeNetSequentialOrderDict(nn.Module):
         }))
 
         self.classifier = nn.Sequential(OrderedDict({
-            'fc1': nn.Linear(16*5*5, 120),
+            'fc1': nn.Linear(16 * 5 * 5, 120),
             'relu3': nn.ReLU(),
 
             'fc2': nn.Linear(120, 84),
@@ -104,7 +108,8 @@ class LeNetSequentialOrderDict(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size()[0], -1)
+        # x = x.view(x.size()[0], -1)
+        x = nn.Flatten()(x)
         x = self.classifier(x)
         return x
 
@@ -120,5 +125,3 @@ class LeNetSequentialOrderDict(nn.Module):
             elif isinstance(m, nn.Linear):
                 nn.init.normal_(m.weight.data, 0, 0.1)
                 m.bias.data.zero_()
-
-

@@ -1,11 +1,17 @@
 import os
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
 from PIL import Image
+import matplotlib.pyplot as plt
+# 导入数据集的包
+import torchvision.datasets
+# 导入dataloader的包
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 torch.manual_seed(10)
+
 
 class FaceData(Dataset):
 
@@ -38,3 +44,21 @@ def load_data():
             with open(os.path.join(label_path, label_dir, img_name + ".txt"), 'w') as f:
                 f.write(label_dir)
 
+
+def test_torchvision():
+    # 创建测试数据集
+    test_dataset = torchvision.datasets.CIFAR10(root="./CIFAR10", train=False,
+                                                transform=torchvision.transforms.ToTensor())
+    # 创建一个dataloader,设置批大小为64，每一个epoch重新洗牌，不进行多进程读取机制，不舍弃不能被整除的批次
+    test_dataloader = DataLoader(dataset=test_dataset, batch_size=64, shuffle=True, num_workers=0, drop_last=False)
+
+    writer = SummaryWriter("log")
+
+    # loader中对象
+    step = 0
+    for data in test_dataloader:
+        imgs, targets = data
+        writer.add_images("loader", imgs, step)
+        step += 1
+
+    writer.close()

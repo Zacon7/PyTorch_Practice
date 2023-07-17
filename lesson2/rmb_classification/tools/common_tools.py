@@ -28,16 +28,6 @@ def transform_invert(img_, transform_train):
     elif img_.shape[2] == 1:
         img_ = Image.fromarray(img_.astype('uint8').squeeze())
     else:
-        raise Exception("Invalid img shape, expected 1 or 3 in axis 2, but got {}!".format(img_.shape[2]) )
+        raise Exception("Invalid img shape, expected 1 or 3 in axis 2, but got {}!".format(img_.shape[2]))
 
     return img_
-
-
-
-
-
-
-
-
-
-
