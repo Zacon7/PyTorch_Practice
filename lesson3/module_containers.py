@@ -19,14 +19,14 @@ class LeNetSequential(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Conv2d(6, 16, 5),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),)
+            nn.MaxPool2d(kernel_size=2, stride=2), )
 
         self.classifier = nn.Sequential(
-            nn.Linear(16*5*5, 120),
+            nn.Linear(16 * 5 * 5, 120),
             nn.ReLU(),
             nn.Linear(120, 84),
             nn.ReLU(),
-            nn.Linear(84, classes),)
+            nn.Linear(84, classes), )
 
     def forward(self, x):
         x = self.features(x)
@@ -50,7 +50,7 @@ class LeNetSequentialOrderDict(nn.Module):
         }))
 
         self.classifier = nn.Sequential(OrderedDict({
-            'fc1': nn.Linear(16*5*5, 120),
+            'fc1': nn.Linear(16 * 5 * 5, 120),
             'relu3': nn.ReLU(),
 
             'fc2': nn.Linear(120, 84),
@@ -82,10 +82,10 @@ class LeNetSequentialOrderDict(nn.Module):
 class ModuleList(nn.Module):
     def __init__(self):
         super(ModuleList, self).__init__()
-        self.linears = nn.ModuleList([nn.Linear(10, 10) for i in range(20)])
+        self.linear_list = nn.ModuleList([nn.Linear(10, 10) for i in range(20)])
 
     def forward(self, x):
-        for i, linear in enumerate(self.linears):
+        for i, linear in enumerate(self.linear_list):
             x = linear(x)
         return x
 
@@ -130,14 +130,6 @@ output = net(fake_img, 'conv', 'relu')
 # output = net(fake_img, 'conv', 'prelu')
 print(output)
 
-
-
-
 # 4 AlexNet
 
 alexnet = torchvision.models.AlexNet()
-
-
-
-
-
