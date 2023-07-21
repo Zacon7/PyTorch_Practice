@@ -26,10 +26,9 @@ from common_tools import set_seed
 set_seed(1)  # 设置随机种子
 
 # ------------------------------------------------- 5 L1 loss ----------------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     inputs = torch.ones((2, 2))
     target = torch.ones((2, 2)) * 3
 
@@ -38,7 +37,7 @@ if flag:
 
     print("input:{}\ntarget:{}\nL1 loss:{}".format(inputs, target, loss))
 
-# ------------------------------------------------- 6 MSE loss ----------------------------------------------
+    # ------------------------------------------------- 6 MSE loss ----------------------------------------------
 
     loss_f_mse = nn.MSELoss(reduction='none')
     loss_mse = loss_f_mse(inputs, target)
@@ -46,17 +45,16 @@ if flag:
     print("MSE loss:{}".format(loss_mse))
 
 # ------------------------------------------------- 7 Smooth L1 loss ----------------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
     inputs = torch.linspace(-3, 3, steps=500)
     target = torch.zeros_like(inputs)
 
     loss_f = nn.SmoothL1Loss(reduction='none')
-
     loss_smooth = loss_f(inputs, target)
 
-    loss_l1 = np.abs(inputs.numpy())
+    loss_l1 = np.abs(target.numpy() - inputs.numpy())
 
     plt.plot(inputs.numpy(), loss_smooth.numpy(), label='Smooth L1 Loss')
     plt.plot(inputs.numpy(), loss_l1, label='L1 loss')
@@ -66,12 +64,10 @@ if flag:
     plt.grid()
     plt.show()
 
-
 # ------------------------------------------------- 8 Poisson NLL Loss ----------------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     inputs = torch.randn((2, 2))
     target = torch.randn((2, 2))
 
@@ -80,22 +76,19 @@ if flag:
     print("input:{}\ntarget:{}\nPoisson NLL loss:{}".format(inputs, target, loss))
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     idx = 0
 
-    loss_1 = torch.exp(inputs[idx, idx]) - target[idx, idx]*inputs[idx, idx]
+    loss_1 = torch.exp(inputs[idx, idx]) - target[idx, idx] * inputs[idx, idx]
 
     print("第一个元素loss:", loss_1)
 
-
 # ------------------------------------------------- 9 KL Divergence Loss ----------------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     inputs = torch.tensor([[0.5, 0.3, 0.2], [0.2, 0.3, 0.5]])
     inputs_log = torch.log(inputs)
     target = torch.tensor([[0.9, 0.05, 0.05], [0.1, 0.7, 0.2]], dtype=torch.float)
@@ -111,22 +104,19 @@ if flag:
     print("loss_none:\n{}\nloss_mean:\n{}\nloss_bs_mean:\n{}".format(loss_none, loss_mean, loss_bs_mean))
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     idx = 0
 
     loss_1 = target[idx, idx] * (torch.log(target[idx, idx]) - inputs[idx, idx])
 
     print("第一个元素loss:", loss_1)
 
-
 # ---------------------------------------------- 10 Margin Ranking Loss --------------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     x1 = torch.tensor([[1], [2], [3]], dtype=torch.float)
     x2 = torch.tensor([[2], [2], [2]], dtype=torch.float)
 
@@ -139,10 +129,9 @@ if flag:
     print(loss)
 
 # ---------------------------------------------- 11 Multi Label Margin Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     x = torch.tensor([[0.1, 0.2, 0.4, 0.8]])
     y = torch.tensor([[0, 3, -1, -1]], dtype=torch.long)
 
@@ -153,23 +142,21 @@ if flag:
     print(loss)
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     x = x[0]
-    item_1 = (1-(x[0] - x[1])) + (1 - (x[0] - x[2]))    # [0]
-    item_2 = (1-(x[3] - x[1])) + (1 - (x[3] - x[2]))    # [3]
+    item_1 = (1 - (x[0] - x[1])) + (1 - (x[0] - x[2]))  # [0]
+    item_2 = (1 - (x[3] - x[1])) + (1 - (x[3] - x[2]))  # [3]
 
     loss_h = (item_1 + item_2) / x.shape[0]
 
     print(loss_h)
 
 # ---------------------------------------------- 12 SoftMargin Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     inputs = torch.tensor([[0.3, 0.7], [0.5, 0.5]])
     target = torch.tensor([[-1, 1], [1, -1]], dtype=torch.float)
 
@@ -180,10 +167,9 @@ if flag:
     print("SoftMargin: ", loss)
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     idx = 0
 
     inputs_i = inputs[idx, idx]
@@ -193,12 +179,10 @@ if flag:
 
     print(loss_h)
 
-
 # ---------------------------------------------- 13 MultiLabel SoftMargin Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     inputs = torch.tensor([[0.3, 0.7, 0.8]])
     target = torch.tensor([[0, 1, 1]], dtype=torch.float)
 
@@ -209,10 +193,9 @@ if flag:
     print("MultiLabel SoftMargin: ", loss)
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     i_0 = torch.log(torch.exp(-inputs[0, 0]) / (1 + torch.exp(-inputs[0, 0])))
 
     i_1 = torch.log(1 / (1 + torch.exp(-inputs[0, 1])))
@@ -223,10 +206,9 @@ if flag:
     print(loss_h)
 
 # ---------------------------------------------- 14 Multi Margin Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     x = torch.tensor([[0.1, 0.2, 0.7], [0.2, 0.5, 0.3]])
     y = torch.tensor([1, 2], dtype=torch.long)
 
@@ -237,10 +219,9 @@ if flag:
     print("Multi Margin Loss: ", loss)
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     x = x[0]
     margin = 1
 
@@ -253,10 +234,9 @@ if flag:
     print(loss_h)
 
 # ---------------------------------------------- 15 Triplet Margin Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     anchor = torch.tensor([[1.]])
     pos = torch.tensor([[2.]])
     neg = torch.tensor([[0.5]])
@@ -268,25 +248,23 @@ if flag:
     print("Triplet Margin Loss", loss)
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     margin = 1
     a, p, n = anchor[0], pos[0], neg[0]
 
-    d_ap = torch.abs(a-p)
-    d_an = torch.abs(a-n)
+    d_ap = torch.abs(a - p)
+    d_an = torch.abs(a - n)
 
     loss = d_ap - d_an + margin
 
     print(loss)
 
 # ---------------------------------------------- 16 Hinge Embedding Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-
     inputs = torch.tensor([[1., 0.8, 0.5]])
     target = torch.tensor([[1, 1, -1]])
 
@@ -297,20 +275,18 @@ if flag:
     print("Hinge Embedding Loss", loss)
 
 # --------------------------------- compute by hand
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
     margin = 1.
     loss = max(0, margin - inputs.numpy()[0, 2])
 
     print(loss)
 
-
 # ---------------------------------------------- 17 Cosine Embedding Loss -----------------------------------------
-# flag = 0
-flag = 1
+# flag = True
+flag = False
 if flag:
-
     x1 = torch.tensor([[0.3, 0.5, 0.7], [0.3, 0.5, 0.7]])
     x2 = torch.tensor([[0.1, 0.3, 0.5], [0.1, 0.3, 0.5]])
 
@@ -323,15 +299,17 @@ if flag:
     print("Cosine Embedding Loss", loss)
 
 # --------------------------------- compute by hand
-# flag = 0
-flag = 1
+# flag = True
+flag = False
 if flag:
     margin = 0.
+
 
     def cosine(a, b):
         numerator = torch.dot(a, b)
         denominator = torch.norm(a, 2) * torch.norm(b, 2)
-        return float(numerator/denominator)
+        return float(numerator / denominator)
+
 
     l_1 = 1 - (cosine(x1[0], x2[0]))
 
@@ -339,15 +317,14 @@ if flag:
 
     print(l_1, l_2)
 
-
 # ---------------------------------------------- 18 CTC Loss -----------------------------------------
-flag = 0
-# flag = 1
+# flag = True
+flag = False
 if flag:
-    T = 50      # Input sequence length
-    C = 20      # Number of classes (including blank)
-    N = 16      # Batch size
-    S = 30      # Target sequence length of longest target in batch
+    T = 50  # Input sequence length
+    C = 20  # Number of classes (including blank)
+    N = 16  # Batch size
+    S = 30  # Target sequence length of longest target in batch
     S_min = 10  # Minimum target length, for demonstration purposes
 
     # Initialize random batch of input vectors, for *size = (T,N,C)
@@ -363,10 +340,3 @@ if flag:
     loss = ctc_loss(inputs, target, input_lengths, target_lengths)
 
     print("CTC loss: ", loss)
-
-
-
-
-
-
-
