@@ -28,7 +28,7 @@ rmb_label = {"1": 0, "100": 1}
 # 参数设置
 MAX_EPOCH = 10
 BATCH_SIZE = 16
-LR = 0.01
+LR = 0.0125
 log_interval = 10
 val_interval = 1
 

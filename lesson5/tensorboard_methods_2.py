@@ -15,12 +15,10 @@ from torchsummary import summary
 
 set_seed(1)  # 设置随机种子
 
-
 # ----------------------------------- 3 image -----------------------------------
 flag = 0
 # flag = 1
 if flag:
-
     writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
 
     # img 1     random
@@ -73,13 +71,11 @@ if flag:
 
     writer.close()
 
-
 # ----------------------------------- 5 add_graph -----------------------------------
 
 # flag = 0
 flag = 1
 if flag:
-
     writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
 
     # 模型
@@ -87,17 +83,7 @@ if flag:
 
     lenet = LeNet(classes=2)
 
-    writer.add_graph(lenet, fake_img)
-
-    writer.close()
-    # print(summary(lenet, (3, 32, 32), device="cpu"))
-
-
-
-
-
-
-
-
-
-
+    # writer.add_graph(lenet, fake_img)
+    #
+    # writer.close()
+    print(summary(lenet, (3, 32, 32), device="cpu"))

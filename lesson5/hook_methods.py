@@ -10,7 +10,6 @@ set_seed(1)  # 设置随机种子
 flag = 0
 # flag = 1
 if flag:
-
     w = torch.tensor([1.], requires_grad=True)
     x = torch.tensor([2.], requires_grad=True)
     a = torch.add(w, x)
@@ -20,9 +19,11 @@ if flag:
     # 保存梯度的 list
     a_grad = list()
 
-    # 定义 hook 函数，把梯度添加到 list 中
+
     def grad_hook(grad):
+        # 定义 hook 函数，把梯度添加到 list 中
         a_grad.append(grad)
+
 
     # 一个张量注册 hook 函数
     handle = a.register_hook(grad_hook)
@@ -35,12 +36,10 @@ if flag:
     print("a_grad[0]: ", a_grad[0])
     handle.remove()
 
-
 # ----------------------------------- 2 tensor hook 2 -----------------------------------
 flag = 0
 # flag = 1
 if flag:
-
     w = torch.tensor([1.], requires_grad=True)
     x = torch.tensor([2.], requires_grad=True)
     a = torch.add(w, x)
@@ -49,9 +48,11 @@ if flag:
 
     a_grad = list()
 
+
     def grad_hook(grad):
         grad *= 2
-        return grad*3
+        return grad * 3
+
 
     handle = w.register_hook(grad_hook)
 
@@ -61,12 +62,10 @@ if flag:
     print("w.grad: ", w.grad)
     handle.remove()
 
-
 # ----------------------------------- 3 Module.register_forward_hook and pre hook -----------------------------------
-# flag = 0
-flag = 1
+flag = 0
+# flag = 1
 if flag:
-
     class Net(nn.Module):
         def __init__(self):
             super(Net, self).__init__()
@@ -78,16 +77,20 @@ if flag:
             x = self.pool1(x)
             return x
 
+
     def forward_hook(module, data_input, data_output):
         fmap_block.append(data_output)
         input_block.append(data_input)
 
+
     def forward_pre_hook(module, data_input):
         print("forward_pre_hook input:{}".format(data_input))
+
 
     def backward_hook(module, grad_input, grad_output):
         print("backward hook input:{}".format(grad_input))
         print("backward hook output:{}".format(grad_output))
+
 
     # 初始化网络
     net = Net()
@@ -103,7 +106,7 @@ if flag:
     net.conv1.register_backward_hook(backward_hook)
 
     # inference
-    fake_img = torch.ones((1, 1, 4, 4))   # batch size * channel * H * W
+    fake_img = torch.ones((1, 1, 4, 4))  # batch size * channel * H * W
     output = net(fake_img)
 
     loss_fnc = nn.L1Loss()
@@ -115,25 +118,3 @@ if flag:
     # print("output shape: {}\noutput value: {}\n".format(output.shape, output))
     # print("feature maps shape: {}\noutput value: {}\n".format(fmap_block[0].shape, fmap_block[0]))
     # print("input shape: {}\ninput value: {}".format(input_block[0][0].shape, input_block[0]))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

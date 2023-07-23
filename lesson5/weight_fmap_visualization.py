@@ -12,7 +12,6 @@ import torchvision.models as models
 
 set_seed(1)  # 设置随机种子
 
-
 # ----------------------------------- kernel visualization -----------------------------------
 flag = 0
 # flag = 1
@@ -42,14 +41,14 @@ if flag:
             # 根据输出的每个维度进行可视化
             for o_idx in range(c_out):
                 # 取出的数据形状是 (c_int, k_w, k_h)，对应 BHW; 需要扩展为 (c_int, 1, k_w, k_h)，对应 BCHW
-                kernel_idx = kernels[o_idx, :, :, :].unsqueeze(1)   # make_grid需要 BCHW，这里拓展C维度
+                kernel_idx = kernels[o_idx, :, :, :].unsqueeze(1)  # make_grid需要 BCHW，这里拓展C维度
                 # 注意 nrow 设置为 c_int，所以行数为 1。在 for 循环中每 添加一个，就会多一个 global_step
                 kernel_grid = vutils.make_grid(kernel_idx, normalize=True, scale_each=True, nrow=c_int)
                 writer.add_image('{}_Convlayer_split_in_channel'.format(kernel_num), kernel_grid, global_step=o_idx)
-            # 因为 channe 为 3 时才能进行可视化，所以这里 reshape
-            kernel_all = kernels.view(-1, 3, k_h, k_w)  #b, 3, h, w
+            # 因为 channel 为 3 时才能进行可视化，所以这里 reshape
+            kernel_all = kernels.view(-1, 3, k_h, k_w)  # b, 3, h, w
             kernel_grid = vutils.make_grid(kernel_all, normalize=True, scale_each=True, nrow=8)  # c, h, w
-            writer.add_image('{}_all'.format(kernel_num), kernel_grid, global_step=kernel_num+1)
+            writer.add_image('{}_all'.format(kernel_num), kernel_grid, global_step=kernel_num + 1)
 
             print("{}_convlayer shape:{}".format(kernel_num, tuple(kernels.shape)))
 
@@ -62,7 +61,7 @@ if flag:
     writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
 
     # 数据
-    path_img = "imgs/lena.png"     # your path to image
+    path_img = "imgs/lena.png"  # your path to image
     normMean = [0.49139968, 0.48215827, 0.44653124]
     normStd = [0.24703233, 0.24348505, 0.26158768]
 
@@ -76,7 +75,7 @@ if flag:
     img_pil = Image.open(path_img).convert('RGB')
     if img_transforms is not None:
         img_tensor = img_transforms(img_pil)
-    img_tensor.unsqueeze_(0)    # chw --> bchw
+    img_tensor.unsqueeze_(0)  # chw --> bchw
 
     # 模型
     alexnet = models.alexnet(pretrained=True)
@@ -93,28 +92,3 @@ if flag:
 
     writer.add_image('feature map in conv1', fmap_1_grid, global_step=322)
     writer.close()
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
