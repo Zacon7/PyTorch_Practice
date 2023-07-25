@@ -17,12 +17,11 @@ lr_init = 0.01
 
 # ============================ step 1/5 数据 ============================
 def gen_data(num_data=10, x_range=(-1, 1)):
-
     w = 1.5
     train_x = torch.linspace(*x_range, num_data).unsqueeze_(1)
-    train_y = w*train_x + torch.normal(0, 0.5, size=train_x.size())
+    train_y = w * train_x + torch.normal(0, 0.5, size=train_x.size())
     test_x = torch.linspace(*x_range, num_data).unsqueeze_(1)
-    test_y = w*test_x + torch.normal(0, 0.3, size=test_x.size())
+    test_y = w * test_x + torch.normal(0, 0.3, size=test_x.size())
 
     return train_x, train_y, test_x, test_y
 
@@ -32,31 +31,31 @@ train_x, train_y, test_x, test_y = gen_data(x_range=(-1, 1))
 
 # ============================ step 2/5 模型 ============================
 class MLP(nn.Module):
-    def __init__(self, neural_num, d_prob=0.5):
+    def __init__(self, unit_nums, d_prob=0.5):
         super(MLP, self).__init__()
         self.linears = nn.Sequential(
 
-            nn.Linear(1, neural_num),
+            nn.Linear(1, unit_nums),
             nn.ReLU(inplace=True),
 
             nn.Dropout(d_prob),
-            nn.Linear(neural_num, neural_num),
+            nn.Linear(unit_nums, unit_nums),
             nn.ReLU(inplace=True),
 
             nn.Dropout(d_prob),
-            nn.Linear(neural_num, neural_num),
+            nn.Linear(unit_nums, unit_nums),
             nn.ReLU(inplace=True),
 
             nn.Dropout(d_prob),
-            nn.Linear(neural_num, 1),
+            nn.Linear(unit_nums, 1),
         )
 
     def forward(self, x):
         return self.linears(x)
 
 
-net_prob_0 = MLP(neural_num=n_hidden, d_prob=0.)
-net_prob_05 = MLP(neural_num=n_hidden, d_prob=0.5)
+net_prob_0 = MLP(unit_nums=n_hidden, d_prob=0.)
+net_prob_05 = MLP(unit_nums=n_hidden, d_prob=0.5)
 
 # ============================ step 3/5 优化器 ============================
 optim_normal = torch.optim.SGD(net_prob_0.parameters(), lr=lr_init, momentum=0.9)
@@ -82,7 +81,7 @@ for epoch in range(max_iter):
     optim_normal.step()
     optim_reglar.step()
 
-    if (epoch+1) % disp_interval == 0:
+    if (epoch + 1) % disp_interval == 0:
 
         net_prob_0.eval()
         net_prob_05.eval()
@@ -108,31 +107,9 @@ for epoch in range(max_iter):
 
         plt.ylim((-2.5, 2.5))
         plt.legend(loc='upper left')
-        plt.title("Epoch: {}".format(epoch+1))
+        plt.title("Epoch: {}".format(epoch + 1))
         plt.show()
         plt.close()
 
         net_prob_0.train()
         net_prob_05.train()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

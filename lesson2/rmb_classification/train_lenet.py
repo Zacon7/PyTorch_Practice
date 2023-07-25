@@ -26,11 +26,11 @@ set_seed()  # 设置随机种子
 rmb_label = {"1": 0, "100": 1}
 
 # 参数设置
-MAX_EPOCH = 10
-BATCH_SIZE = 16
+MAX_EPOCH = 10  # 将所有数据集迭代训练 10 次
+BATCH_SIZE = 16  # 每个 batch 大小为 16；由于训练数据集一共 160 张图片，故可分为 10 个 batch，每个 epoch 会更新 10 次， 即 iteration = 10
 LR = 0.0125
-log_interval = 10
-val_interval = 1
+log_interval = 10  # 每经过 10 个 训练 batch (或每更新 10 个 iteration) 打印一次信息
+val_interval = 1  # 每经过 1 个 epoch 打印一次信息
 
 # ============================ step 1/5 数据 ============================
 # 设置路径参数
@@ -88,12 +88,12 @@ iterations = 0
 writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
 
 for epoch in range(MAX_EPOCH):
-    loss_mean = 0.
-    correct = 0.
-    total = 0.
+    loss_mean = 0.  # 计算每10个 batch 数据的平均 loss 值（每个iteration），每轮 epoch 都清零
+    correct = 0.  # 统计预测正确的个数，每轮 epoch 都清零
+    total = 0.  # 统计总样本数，，每轮 epoch 都清零
 
     net.train()
-    # 遍历 train_loader 取数据
+    # 遍历 train_loader 取数据，每次取出 batch_size 个数据
     for i, data in enumerate(train_loader):
         iterations += 1
         # forward
@@ -110,55 +110,58 @@ for epoch in range(MAX_EPOCH):
 
         # 统计分类情况
         _, predicted = torch.max(outputs.data, dim=1)
-        total += labels.size(0)
-        correct += (predicted == labels).squeeze().sum().numpy()
+        total += labels.size(0)  # 将这一批 batch 的个数加到 total 变量中
+        correct += (predicted == labels).squeeze().sum().numpy()  # 计算这一批 batch 预测正确的数量
 
         # 打印训练信息
         loss_mean += loss.item()
-        train_curve.append(loss.item())
+        train_curve.append(loss.item())  # 将本 batch 的 loss 值加入统计list
         if (i + 1) % log_interval == 0:
-            loss_mean = loss_mean / log_interval
-            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
+            loss_mean = loss_mean / log_interval  # 计算这10个 batch 的平均loss
+            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
                 epoch, MAX_EPOCH, i + 1, len(train_loader), loss_mean, correct / total))
             loss_mean = 0.
 
         # 记录数据，保存于event file
-        writer.add_scalars("Loss", {"Train": loss.item()}, iterations)
-        writer.add_scalars("Accuracy", {"Train": correct / total}, iterations)
+        writer.add_scalars("Train Loss mean", {"Train": loss.item()}, iterations)
+        writer.add_scalars("Train Accuracy", {"Train": correct / total}, iterations)
 
     # 每个epoch，记录梯度，权值
     for name, param in net.named_parameters():
         writer.add_histogram(name + '_grad', param.grad, epoch)
         writer.add_histogram(name + '_data', param, epoch)
 
-    scheduler.step()  # 每个 epoch 更新学习率
-    # 每个 epoch 计算验证集得准确率和loss
+    scheduler.step()  # 每个 epoch 都更新学习率
+
+    # 每个 epoch 结束都计算验证集的准确率和loss
     # validate the model
     if (epoch + 1) % val_interval == 0:
 
+        loss_val_mean = 0.
         correct_val = 0.
         total_val = 0.
-        loss_val = 0.
         net.eval()
+
         with torch.no_grad():
             for j, data in enumerate(valid_loader):
                 inputs, labels = data
                 outputs = net(inputs)
                 loss = criterion(outputs, labels)
 
+                loss_val_mean += loss.item()
+
                 _, predicted = torch.max(outputs.data, 1)
                 total_val += labels.size(0)
                 correct_val += (predicted == labels).squeeze().sum().numpy()
 
-                loss_val += loss.item()
-
-            valid_curve.append(loss_val / valid_loader.__len__())
-            print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val, correct_val / total_val))
+            loss_val_mean = loss_val_mean / len(valid_loader)
+            valid_curve.append(loss_val_mean)
+            print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
+                epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val_mean, correct_val / total_val))
 
             # 记录数据，保存于event file
-            writer.add_scalars("Loss", {"Valid": np.mean(valid_curve)}, iterations)
-            writer.add_scalars("Accuracy", {"Valid": correct / total}, iterations)
+            writer.add_scalars("Valid Loss mean", {"Valid": np.mean(valid_curve)}, iterations)
+            writer.add_scalars("Valid Accuracy", {"Valid": correct / total}, iterations)
 
 train_x = range(len(train_curve))
 train_y = train_curve

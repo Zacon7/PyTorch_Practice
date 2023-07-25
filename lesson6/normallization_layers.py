@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 from common_tools import set_seed
 
-
 set_seed(1)  # 设置随机种子
 
 # ======================================== nn.layer norm
@@ -46,7 +45,7 @@ if flag:
 
     features_shape = (2, 2)
 
-    feature_map = torch.ones(features_shape)    # 2D
+    feature_map = torch.ones(features_shape)  # 2D
     feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 3D
     feature_maps_bs = torch.stack([feature_maps for i in range(batch_size)], dim=0)  # 4D
 
@@ -60,19 +59,16 @@ if flag:
 
         print(outputs)
 
-
-
 # ======================================== nn.grop norm
 flag = 1
 # flag = 0
 if flag:
-
     batch_size = 2
     num_features = 4
     num_groups = 2
     features_shape = (2, 2)
 
-    feature_map = torch.ones(features_shape)    # 2D
+    feature_map = torch.ones(features_shape)  # 2D
     feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 3D
     feature_maps_bs = torch.stack([feature_maps * (i + 1) for i in range(batch_size)], dim=0)  # 4D
 
@@ -82,9 +78,3 @@ if flag:
     print("Group Normalization")
     print(gn.weight.shape)
     print(outputs[0])
-
-
-
-
-
-

@@ -32,24 +32,24 @@ train_x, train_y, test_x, test_y = gen_data(x_range=(-1, 1))
 
 # ============================ step 2/5 模型 ============================
 class MLP(nn.Module):
-    def __init__(self, neural_num):
+    def __init__(self, units_num):
         super(MLP, self).__init__()
         self.linears = nn.Sequential(
-            nn.Linear(1, neural_num),
+            nn.Linear(1, units_num),
             nn.ReLU(inplace=True),
-            nn.Linear(neural_num, neural_num),
+            nn.Linear(units_num, units_num),
             nn.ReLU(inplace=True),
-            nn.Linear(neural_num, neural_num),
+            nn.Linear(units_num, units_num),
             nn.ReLU(inplace=True),
-            nn.Linear(neural_num, 1),
+            nn.Linear(units_num, 1),
         )
 
     def forward(self, x):
         return self.linears(x)
 
 
-net_normal = MLP(neural_num=n_hidden)
-net_weight_decay = MLP(neural_num=n_hidden)
+net_normal = MLP(units_num=n_hidden)
+net_weight_decay = MLP(units_num=n_hidden)
 
 # ============================ step 3/5 优化器 ============================
 optim_normal = torch.optim.SGD(net_normal.parameters(), lr=lr_init, momentum=0.9)

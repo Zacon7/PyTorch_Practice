@@ -18,9 +18,9 @@ from common_tools import set_seed
 import enviroments
 
 
-class LeNet_bn(nn.Module):
+class LeNet_BN(nn.Module):
     def __init__(self, classes):
-        super(LeNet_bn, self).__init__()
+        super(LeNet_BN, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.bn1 = nn.BatchNorm2d(num_features=6)
 
@@ -37,13 +37,11 @@ class LeNet_bn(nn.Module):
         out = self.conv1(x)
         out = self.bn1(out)
         out = F.relu(out)
-
         out = F.max_pool2d(out, 2)
 
         out = self.conv2(out)
         out = self.bn2(out)
         out = F.relu(out)
-
         out = F.max_pool2d(out, 2)
 
         out = out.view(out.size(0), -1)
@@ -113,16 +111,16 @@ valid_loader = DataLoader(dataset=valid_data, batch_size=BATCH_SIZE)
 
 # ============================ step 2/5 模型 ============================
 
-net = LeNet_bn(classes=2)
+net = LeNet_BN(classes=2)
 # net = LeNet(classes=2)
 # net.initialize_weights()
 
 # ============================ step 3/5 损失函数 ============================
-criterion = nn.CrossEntropyLoss()                                                   # 选择损失函数
+criterion = nn.CrossEntropyLoss()  # 选择损失函数
 
 # ============================ step 4/5 优化器 ============================
-optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)                        # 选择优化器
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)     # 设置学习率下降策略
+optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)  # 选择优化器
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)  # 设置学习率下降策略
 
 # ============================ step 5/5 训练 ============================
 train_curve = list()
@@ -163,10 +161,10 @@ for epoch in range(MAX_EPOCH):
         # 打印训练信息
         loss_mean += loss.item()
         train_curve.append(loss.item())
-        if (i+1) % log_interval == 0:
+        if (i + 1) % log_interval == 0:
             loss_mean = loss_mean / log_interval
             print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, i+1, len(train_loader), loss_mean, correct / total))
+                epoch, MAX_EPOCH, i + 1, len(train_loader), loss_mean, correct / total))
             loss_mean = 0.
 
         # 记录数据，保存于event file
@@ -176,7 +174,7 @@ for epoch in range(MAX_EPOCH):
     scheduler.step()  # 更新学习率
 
     # validate the model
-    if (epoch+1) % val_interval == 0:
+    if (epoch + 1) % val_interval == 0:
 
         correct_val = 0.
         total_val = 0.
@@ -196,7 +194,7 @@ for epoch in range(MAX_EPOCH):
 
             valid_curve.append(loss.item())
             print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, j+1, len(valid_loader), loss_val, correct / total))
+                epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val, correct / total))
 
             # 记录数据，保存于event file
             writer.add_scalars("Loss", {"Valid": loss.item()}, iter_count)
@@ -206,7 +204,7 @@ train_x = range(len(train_curve))
 train_y = train_curve
 
 train_iters = len(train_loader)
-valid_x = np.arange(1, len(valid_curve)+1) * train_iters*val_interval # 由于valid中记录的是epochloss，需要对记录点进行转换到iterations
+valid_x = np.arange(1, len(valid_curve) + 1) * train_iters * val_interval  # 由于valid中记录的是epochloss，需要对记录点进行转换到iterations
 valid_y = valid_curve
 
 plt.plot(train_x, train_y, label='Train')
@@ -216,51 +214,3 @@ plt.legend(loc='upper right')
 plt.ylabel('loss value')
 plt.xlabel('Iteration')
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
