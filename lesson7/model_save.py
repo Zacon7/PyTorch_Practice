@@ -20,7 +20,7 @@ class LeNet2(nn.Module):
             nn.MaxPool2d(2, 2)
         )
         self.classifier = nn.Sequential(
-            nn.Linear(16*5*5, 120),
+            nn.Linear(16 * 5 * 5, 120),
             nn.ReLU(),
             nn.Linear(120, 84),
             nn.ReLU(),
@@ -54,10 +54,3 @@ torch.save(net, path_model)
 # 保存模型参数
 net_state_dict = net.state_dict()
 torch.save(net_state_dict, path_state_dict)
-
-
-
-
-
-
-

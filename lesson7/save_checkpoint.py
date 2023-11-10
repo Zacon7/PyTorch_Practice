@@ -29,7 +29,6 @@ LR = 0.01
 log_interval = 10
 val_interval = 1
 
-
 # ============================ step 1/5 数据 ============================
 
 split_dir = enviroments.rmb_split_dir
@@ -67,18 +66,18 @@ net = LeNet(classes=2)
 net.initialize_weights()
 
 # ============================ step 3/5 损失函数 ============================
-criterion = nn.CrossEntropyLoss()                                                   # 选择损失函数
+criterion = nn.CrossEntropyLoss()  # 选择损失函数
 
 # ============================ step 4/5 优化器 ============================
-optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)                        # 选择优化器
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=6, gamma=0.1)     # 设置学习率下降策略
+optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)  # 选择优化器
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=6, gamma=0.1)  # 设置学习率下降策略
 
 # ============================ step 5/5 训练 ============================
 train_curve = list()
 valid_curve = list()
 
 start_epoch = -1
-for epoch in range(start_epoch+1, MAX_EPOCH):
+for epoch in range(start_epoch + 1, MAX_EPOCH):
 
     loss_mean = 0.
     correct = 0.
@@ -92,31 +91,56 @@ for epoch in range(start_epoch+1, MAX_EPOCH):
         outputs = net(inputs)
 
         # backward
-        optimizer.zero_grad()
         loss = criterion(outputs, labels)
         loss.backward()
 
         # update weights
         optimizer.step()
+        optimizer.zero_grad()
 
         # 统计分类情况
-        _, predicted = torch.max(outputs.data, 1)
+        _, predicted = torch.max(outputs.batch_data, 1)
         total += labels.size(0)
         correct += (predicted == labels).squeeze().sum().numpy()
 
         # 打印训练信息
         loss_mean += loss.item()
         train_curve.append(loss.item())
-        if (i+1) % log_interval == 0:
+        if (i + 1) % log_interval == 0:
             loss_mean = loss_mean / log_interval
-            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, i+1, len(train_loader), loss_mean, correct / total))
+            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
+                epoch, MAX_EPOCH, i + 1, len(train_loader), loss_mean, correct / total))
             loss_mean = 0.
 
     scheduler.step()  # 更新学习率
 
-    if (epoch+1) % checkpoint_interval == 0:
+    # validate the model
+    if (epoch + 1) % val_interval == 0:
 
+        loss_val_mean = 0.
+        correct_val = 0.
+        total_val = 0.
+        net.eval()
+
+        with torch.no_grad():
+            for j, data in enumerate(valid_loader):
+                inputs, labels = data
+                outputs = net(inputs)
+                loss = criterion(outputs, labels)
+
+                loss_val_mean += loss.item()
+
+                _, predicted = torch.max(outputs.batch_data, 1)
+                total_val += labels.size(0)
+                correct_val += (predicted == labels).squeeze().sum().numpy()
+
+            loss_val_mean = loss_val_mean / len(valid_loader)
+            valid_curve.append(loss_val_mean)
+            print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
+                epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val_mean, correct / total))
+
+    # 每训练若干个 epoch 就保存一次断点
+    if (epoch + 1) % checkpoint_interval == 0:
         checkpoint = {"model_state_dict": net.state_dict(),
                       "optimizer_state_dict": optimizer.state_dict(),
                       "epoch": epoch}
@@ -127,35 +151,11 @@ for epoch in range(start_epoch+1, MAX_EPOCH):
         print("训练意外中断...")
         break
 
-    # validate the model
-    if (epoch+1) % val_interval == 0:
-
-        correct_val = 0.
-        total_val = 0.
-        loss_val = 0.
-        net.eval()
-        with torch.no_grad():
-            for j, data in enumerate(valid_loader):
-                inputs, labels = data
-                outputs = net(inputs)
-                loss = criterion(outputs, labels)
-
-                _, predicted = torch.max(outputs.data, 1)
-                total_val += labels.size(0)
-                correct_val += (predicted == labels).squeeze().sum().numpy()
-
-                loss_val += loss.item()
-
-            valid_curve.append(loss.item())
-            print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, j+1, len(valid_loader), loss_val/len(valid_loader), correct / total))
-
-
 train_x = range(len(train_curve))
 train_y = train_curve
 
 train_iters = len(train_loader)
-valid_x = np.arange(1, len(valid_curve)+1) * train_iters*val_interval # 由于valid中记录的是epochloss，需要对记录点进行转换到iterations
+valid_x = np.arange(1, len(valid_curve) + 1) * train_iters * val_interval  # 由于valid中记录的是epochloss，需要对记录点进行转换到iterations
 valid_y = valid_curve
 
 plt.plot(train_x, train_y, label='Train')
@@ -165,10 +165,3 @@ plt.legend(loc='upper right')
 plt.ylabel('loss value')
 plt.xlabel('Iteration')
 plt.show()
-
-
-
-
-
-
-

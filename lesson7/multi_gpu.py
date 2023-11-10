@@ -11,12 +11,10 @@ import torch.nn as nn
 flag = 0
 # flag = 1
 if flag:
-
     gpu_list = [0]
     gpu_list_str = ','.join(map(str, gpu_list))
     os.environ.setdefault("CUDA_VISIBLE_DEVICES", gpu_list_str)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 
 # ============================ 依内存情况自动选择主gpu
 flag = 0
@@ -51,7 +49,6 @@ class FooNet(nn.Module):
         self.linears = nn.ModuleList([nn.Linear(neural_num, neural_num, bias=False) for i in range(layers)])
 
     def forward(self, x):
-
         print("\nbatch size in forward: {}".format(x.size()[0]))
 
         for (i, linear) in enumerate(self.linears):
@@ -62,10 +59,11 @@ class FooNet(nn.Module):
 
 if __name__ == "__main__":
     # 设置 2 个可见 GPU
-    gpu_list = [0,1]
+    gpu_list = [0, 1]
     gpu_list_str = ','.join(map(str, gpu_list))
     os.environ.setdefault("CUDA_VISIBLE_DEVICES", gpu_list_str)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # 这里注意，需要指定一个 GPU 作为主 GPU。
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     batch_size = 16
 
@@ -82,31 +80,9 @@ if __name__ == "__main__":
 
     # training
     for epoch in range(1):
-
         outputs = net(inputs)
 
         print("model outputs.size: {}".format(outputs.size()))
 
     print("CUDA_VISIBLE_DEVICES :{}".format(os.environ["CUDA_VISIBLE_DEVICES"]))
     print("device_count :{}".format(torch.cuda.device_count()))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -54,12 +54,15 @@ class RMBDataset(Dataset):
                 label = rmb_label[sub_dir]
                 # 将图片路径、图片标签作为二元组保存在 data_info list中
                 data_info.append((path_img, int(label)))
+
+        if len(data_info) == 0:
+            raise Exception('\ndata_dir:{} is a empty dir! please check your image paths!'.format(data_dir))
+            
         return data_info
 
 
 class AntsDataset(Dataset):
     def __init__(self, data_dir, transform=None):
-        self.label_name = {'ants': 0, 'bees': 1}
         self.data_info = self.get_item_info(data_dir)
         self.transform = transform
 
@@ -70,23 +73,23 @@ class AntsDataset(Dataset):
             img = self.transform(img)
         return img, label
 
+    def __len__(self):
+        return len(self.data_info)
+
     @staticmethod
     def get_item_info(data_dir):
         data_info = list()
-        for root, dirs, _ in os.walk(data_dir):
-            for sub_dir in dirs:
-                img_names = os.listdir(os.path.join(root, sub_dir))
-                img_names = list(filter(lambda x: x.endswith('.jpg'), img_names))
+        dirs = os.listdir(data_dir)
+        for sub_dir in dirs:
+            img_names = os.listdir(os.path.join(data_dir, sub_dir))
+            img_names = list(filter(lambda x: x.endswith('.jpg'), img_names))
 
-                for i in range(len(img_names)):
-                    path_img = os.path.join(root, sub_dir, img_names[i])
-                    label = ants_label[sub_dir]
-                    data_info.append((path_img, int(label)))
+            for img_name in img_names:
+                path_img = os.path.join(data_dir, sub_dir, img_name)
+                label = ants_label[sub_dir]
+                data_info.append((path_img, int(label)))
 
         if len(data_info) == 0:
             raise Exception('\ndata_dir:{} is a empty dir! please check your image paths!'.format(data_dir))
 
         return data_info
-
-    def __len__(self):
-        return len(self.data_info)

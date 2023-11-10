@@ -12,7 +12,6 @@ class FooNet(nn.Module):
         self.linears = nn.ModuleList([nn.Linear(neural_num, neural_num, bias=False) for i in range(layers)])
 
     def forward(self, x):
-
         print("\nbatch size in forward: {}".format(x.size()[0]))
 
         for (i, linear) in enumerate(self.linears):
@@ -43,7 +42,6 @@ if flag:
     state_dict_load = torch.load(path_state_dict, map_location="cpu")
     print("state_dict_load:\n{}".format(state_dict_load))
 
-
 # =================================== 多gpu 保存
 flag = 0
 # flag = 1
@@ -52,6 +50,7 @@ if flag:
     if torch.cuda.device_count() < 2:
         print("gpu数量不足，请到多gpu环境下运行")
         import sys
+
         sys.exit(0)
 
     gpu_list = [0, 1, 2, 3]
@@ -83,6 +82,7 @@ if flag:
 
     # remove module.
     from collections import OrderedDict
+
     new_state_dict = OrderedDict()
     for k, v in state_dict_load.items():
         namekey = k[7:] if k.startswith('module.') else k
@@ -90,23 +90,3 @@ if flag:
     print("new_state_dict:\n{}".format(new_state_dict))
 
     net.load_state_dict(new_state_dict)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

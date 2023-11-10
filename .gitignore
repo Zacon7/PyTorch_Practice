@@ -128,3 +128,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /data/
+
+# vscode
+.vscode
+
+# pycharm
+.idea/
+
+# tensorvision
+log/
+runs/
