@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 
 random.seed(1)
 rmb_label = {"1": 0, "100": 1}
-ants_label = {'ants': 0, 'bees': 1}
+ants_label = {"ants": 0, "bees": 1}
 
 
 class RMBDataset(Dataset):
@@ -25,7 +25,7 @@ class RMBDataset(Dataset):
         # 通过 index 读取样本
         path_img, label = self.data_info[index]
         # 注意这里需要 convert('RGB')
-        img = Image.open(path_img).convert('RGB')  # 0~255
+        img = Image.open(path_img).convert("RGB")  # 0~255
         if self.transform is not None:
             img = self.transform(img)  # 在这里做transform，转为tensor等等
         # 返回是样本和标签
@@ -45,7 +45,7 @@ class RMBDataset(Dataset):
             # 读取文件列表
             img_names = os.listdir(os.path.join(data_dir, sub_dir))
             # 取出 jpg 结尾的文件
-            img_names = list(filter(lambda x: x.endswith('.jpg'), img_names))
+            img_names = list(filter(lambda x: x.endswith(".jpg"), img_names))
             # 遍历图片
             for img_name in img_names:
                 # 图片的绝对路径
@@ -56,8 +56,12 @@ class RMBDataset(Dataset):
                 data_info.append((path_img, int(label)))
 
         if len(data_info) == 0:
-            raise Exception('\ndata_dir:{} is a empty dir! please check your image paths!'.format(data_dir))
-            
+            raise Exception(
+                "\ndata_dir:{} is a empty dir! please check your image paths!".format(
+                    data_dir
+                )
+            )
+
         return data_info
 
 
@@ -68,7 +72,7 @@ class AntsDataset(Dataset):
 
     def __getitem__(self, index):
         path, label = self.data_info[index]
-        img = Image.open(path).convert('RGB')
+        img = Image.open(path).convert("RGB")
         if self.transform is not None:
             img = self.transform(img)
         return img, label
@@ -82,7 +86,7 @@ class AntsDataset(Dataset):
         dirs = os.listdir(data_dir)
         for sub_dir in dirs:
             img_names = os.listdir(os.path.join(data_dir, sub_dir))
-            img_names = list(filter(lambda x: x.endswith('.jpg'), img_names))
+            img_names = list(filter(lambda x: x.endswith(".jpg"), img_names))
 
             for img_name in img_names:
                 path_img = os.path.join(data_dir, sub_dir, img_name)
@@ -90,6 +94,10 @@ class AntsDataset(Dataset):
                 data_info.append((path_img, int(label)))
 
         if len(data_info) == 0:
-            raise Exception('\ndata_dir:{} is a empty dir! please check your image paths!'.format(data_dir))
+            raise Exception(
+                "\ndata_dir:{} is a empty dir! please check your image paths!".format(
+                    data_dir
+                )
+            )
 
         return data_info

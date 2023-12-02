@@ -9,7 +9,9 @@ import torch.nn as nn
 class FooNet(nn.Module):
     def __init__(self, neural_num, layers=3):
         super(FooNet, self).__init__()
-        self.linears = nn.ModuleList([nn.Linear(neural_num, neural_num, bias=False) for i in range(layers)])
+        self.linears = nn.ModuleList(
+            [nn.Linear(neural_num, neural_num, bias=False) for i in range(layers)]
+        )
 
     def forward(self, x):
         print("\nbatch size in forward: {}".format(x.size()[0]))
@@ -25,7 +27,7 @@ flag = 0
 # flag = 1
 if flag:
     gpu_list = [0]
-    gpu_list_str = ','.join(map(str, gpu_list))
+    gpu_list_str = ",".join(map(str, gpu_list))
     os.environ.setdefault("CUDA_VISIBLE_DEVICES", gpu_list_str)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -54,7 +56,7 @@ if flag:
         sys.exit(0)
 
     gpu_list = [0, 1, 2, 3]
-    gpu_list_str = ','.join(map(str, gpu_list))
+    gpu_list_str = ",".join(map(str, gpu_list))
     os.environ.setdefault("CUDA_VISIBLE_DEVICES", gpu_list_str)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -85,7 +87,7 @@ if flag:
 
     new_state_dict = OrderedDict()
     for k, v in state_dict_load.items():
-        namekey = k[7:] if k.startswith('module.') else k
+        namekey = k[7:] if k.startswith("module.") else k
         new_state_dict[namekey] = v
     print("new_state_dict:\n{}".format(new_state_dict))
 

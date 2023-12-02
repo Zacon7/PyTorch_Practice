@@ -10,8 +10,8 @@ set_seed(1)  # 设置随机种子
 flag = 0
 # flag = 1
 if flag:
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
     a = torch.add(w, x)
     b = torch.add(w, 1)
     y = torch.mul(a, b)
@@ -19,11 +19,9 @@ if flag:
     # 保存梯度的 list
     a_grad = list()
 
-
     def grad_hook(grad):
         # 定义 hook 函数，把梯度添加到 list 中
         a_grad.append(grad)
-
 
     # 一个张量注册 hook 函数
     handle = a.register_hook(grad_hook)
@@ -40,19 +38,17 @@ if flag:
 flag = 0
 # flag = 1
 if flag:
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
     a = torch.add(w, x)
     b = torch.add(w, 1)
     y = torch.mul(a, b)
 
     a_grad = list()
 
-
     def grad_hook(grad):
         grad *= 2
         return grad * 3
-
 
     handle = w.register_hook(grad_hook)
 
@@ -66,6 +62,7 @@ if flag:
 flag = 0
 # flag = 1
 if flag:
+
     class Net(nn.Module):
         def __init__(self):
             super(Net, self).__init__()
@@ -77,20 +74,16 @@ if flag:
             x = self.pool1(x)
             return x
 
-
     def forward_hook(module, data_input, data_output):
         fmap_block.append(data_output)
         input_block.append(data_input)
 
-
     def forward_pre_hook(module, data_input):
         print("forward_pre_hook input:{}".format(data_input))
-
 
     def backward_hook(module, grad_input, grad_output):
         print("backward hook input:{}".format(grad_input))
         print("backward hook output:{}".format(grad_output))
-
 
     # 初始化网络
     net = Net()

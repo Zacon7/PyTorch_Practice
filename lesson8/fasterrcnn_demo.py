@@ -28,29 +28,108 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # classes_coco
 COCO_INSTANCE_CATEGORY_NAMES = [
-    '__background__', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
-    'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'N/A', 'stop sign',
-    'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
-    'elephant', 'bear', 'zebra', 'giraffe', 'N/A', 'backpack', 'umbrella', 'N/A', 'N/A',
-    'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
-    'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket',
-    'bottle', 'N/A', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
-    'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza',
-    'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'N/A', 'dining table',
-    'N/A', 'N/A', 'toilet', 'N/A', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone',
-    'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'N/A', 'book',
-    'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+    "__background__",
+    "person",
+    "bicycle",
+    "car",
+    "motorcycle",
+    "airplane",
+    "bus",
+    "train",
+    "truck",
+    "boat",
+    "traffic light",
+    "fire hydrant",
+    "N/A",
+    "stop sign",
+    "parking meter",
+    "bench",
+    "bird",
+    "cat",
+    "dog",
+    "horse",
+    "sheep",
+    "cow",
+    "elephant",
+    "bear",
+    "zebra",
+    "giraffe",
+    "N/A",
+    "backpack",
+    "umbrella",
+    "N/A",
+    "N/A",
+    "handbag",
+    "tie",
+    "suitcase",
+    "frisbee",
+    "skis",
+    "snowboard",
+    "sports ball",
+    "kite",
+    "baseball bat",
+    "baseball glove",
+    "skateboard",
+    "surfboard",
+    "tennis racket",
+    "bottle",
+    "N/A",
+    "wine glass",
+    "cup",
+    "fork",
+    "knife",
+    "spoon",
+    "bowl",
+    "banana",
+    "apple",
+    "sandwich",
+    "orange",
+    "broccoli",
+    "carrot",
+    "hot dog",
+    "pizza",
+    "donut",
+    "cake",
+    "chair",
+    "couch",
+    "potted plant",
+    "bed",
+    "N/A",
+    "dining table",
+    "N/A",
+    "N/A",
+    "toilet",
+    "N/A",
+    "tv",
+    "laptop",
+    "mouse",
+    "remote",
+    "keyboard",
+    "cell phone",
+    "microwave",
+    "oven",
+    "toaster",
+    "sink",
+    "refrigerator",
+    "N/A",
+    "book",
+    "clock",
+    "vase",
+    "scissors",
+    "teddy bear",
+    "hair drier",
+    "toothbrush",
 ]
 
 
 def vis_bbox(img, output, classes, max_vis=40, prob_thres=0.4):
     fig, ax = plt.subplots(figsize=(12, 12))
-    ax.imshow(img, aspect='equal')
-    
+    ax.imshow(img, aspect="equal")
+
     out_boxes = output_dict["boxes"].cpu()
     out_scores = output_dict["scores"].cpu()
     out_labels = output_dict["labels"].cpu()
-    
+
     num_boxes = out_boxes.shape[0]
     for idx in range(0, min(num_boxes, max_vis)):
 
@@ -61,10 +140,24 @@ def vis_bbox(img, output, classes, max_vis=40, prob_thres=0.4):
         if score < prob_thres:
             continue
 
-        ax.add_patch(plt.Rectangle((bbox[0], bbox[1]), bbox[2] - bbox[0], bbox[3] - bbox[1], fill=False,
-                                   edgecolor='red', linewidth=3.5))
-        ax.text(bbox[0], bbox[1] - 2, '{:s} {:.3f}'.format(class_name, score), bbox=dict(facecolor='blue', alpha=0.5),
-                fontsize=14, color='white')
+        ax.add_patch(
+            plt.Rectangle(
+                (bbox[0], bbox[1]),
+                bbox[2] - bbox[0],
+                bbox[3] - bbox[1],
+                fill=False,
+                edgecolor="red",
+                linewidth=3.5,
+            )
+        )
+        ax.text(
+            bbox[0],
+            bbox[1] - 2,
+            "{:s} {:.3f}".format(class_name, score),
+            bbox=dict(facecolor="blue", alpha=0.5),
+            fontsize=14,
+            color="white",
+        )
     plt.show()
     plt.close()
 
@@ -121,7 +214,9 @@ if __name__ == "__main__":
     # step 2: model
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
     in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes) # replace the pre-trained head with a new one
+    model.roi_heads.box_predictor = FastRCNNPredictor(
+        in_features, num_classes
+    )  # replace the pre-trained head with a new one
 
     model.to(device)
 
@@ -147,12 +242,17 @@ if __name__ == "__main__":
             # if torch.cuda.is_available():
             #     images, targets = images.to(device), targets.to(device)
 
-            loss_dict = model(images, targets)  # images is list; targets is [ dict["boxes":**, "labels":**], dict[] ]
+            loss_dict = model(
+                images, targets
+            )  # images is list; targets is [ dict["boxes":**, "labels":**], dict[] ]
 
             losses = sum(loss for loss in loss_dict.values())
 
-            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} ".format(
-                epoch, max_epoch, iter + 1, len(train_loader), losses.item()))
+            print(
+                "Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} ".format(
+                    epoch, max_epoch, iter + 1, len(train_loader), losses.item()
+                )
+            )
 
             optimizer.zero_grad()
             losses.backward()
@@ -168,7 +268,11 @@ if __name__ == "__main__":
     vis_dir = os.path.join(BASE_DIR, "..", "..", "data", "PennFudanPed", "PNGImages")
     img_names = list(filter(lambda x: x.endswith(".png"), os.listdir(vis_dir)))
     random.shuffle(img_names)
-    preprocess = transforms.Compose([transforms.ToTensor(), ])
+    preprocess = transforms.Compose(
+        [
+            transforms.ToTensor(),
+        ]
+    )
 
     for i in range(0, vis_num):
 
@@ -179,8 +283,8 @@ if __name__ == "__main__":
 
         # to device
         if torch.cuda.is_available():
-            img_chw = img_chw.to('cuda')
-            model.to('cuda')
+            img_chw = img_chw.to("cuda")
+            model.to("cuda")
 
         # forward
         input_list = [img_chw]
@@ -192,6 +296,10 @@ if __name__ == "__main__":
             print("pass: {:.3f}s".format(time.time() - tic))
 
         # visualization
-        vis_bbox(input_image, output_dict, COCO_INSTANCE_CATEGORY_NAMES, max_vis=20, prob_thres=0.5)  # for 2 epoch for nms
-
-
+        vis_bbox(
+            input_image,
+            output_dict,
+            COCO_INSTANCE_CATEGORY_NAMES,
+            max_vis=20,
+            prob_thres=0.5,
+        )  # for 2 epoch for nms

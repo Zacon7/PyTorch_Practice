@@ -4,18 +4,18 @@ from enviroments import project_dir, rmb_split_dir
 from PIL import Image
 from matplotlib import pyplot as plt
 
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+plt.rcParams["font.sans-serif"] = ["SimHei"]  # 用来正常显示中文标签
+plt.rcParams["axes.unicode_minus"] = False  # 用来正常显示负号
 
 # 第四套1元人民币
 path_img1_4 = os.path.join(rmb_split_dir, "train", "1", "0B89KOA3.jpg")
-path_img1_4 = Image.open(path_img1_4).convert('RGB')
+path_img1_4 = Image.open(path_img1_4).convert("RGB")
 # 第四套100元人民币
 path_img100_4 = os.path.join(rmb_split_dir, "train", "100", "0A4DSPGE.jpg")
-path_img100_4 = Image.open(path_img100_4).convert('RGB')
+path_img100_4 = Image.open(path_img100_4).convert("RGB")
 # 第五套100元人民币
 path_img100_5 = os.path.join(project_dir, "data", "rmb_test_data", "100", "1001.jpg")
-path_img100_5 = Image.open(path_img100_5).convert('RGB')
+path_img100_5 = Image.open(path_img100_5).convert("RGB")
 
 plt.subplot(3, 1, 1)
 plt.title("第四套1元人民币")

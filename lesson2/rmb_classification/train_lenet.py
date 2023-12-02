@@ -41,21 +41,25 @@ norm_mean = [0.485, 0.456, 0.406]
 norm_std = [0.229, 0.224, 0.225]
 
 # 设置训练集的数据增强和转化
-train_transform = transforms.Compose([
-    transforms.Resize((32, 32)),
-    transforms.RandomCrop(32, padding=4),
-    transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+train_transform = transforms.Compose(
+    [
+        transforms.Resize((32, 32)),
+        transforms.RandomCrop(32, padding=4),
+        transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
 # 设置验证集的数据增强和转化，不需要 RandomCrop
-valid_transform = transforms.Compose([
-    transforms.Resize((32, 32)),
-    transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+valid_transform = transforms.Compose(
+    [
+        transforms.Resize((32, 32)),
+        transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
 # 构建RMBDataset实例
 train_data = RMBDataset(data_dir=train_dir, transform=train_transform)
@@ -76,7 +80,9 @@ criterion = nn.CrossEntropyLoss()  # 选择损失函数
 
 # ============================ step 4/5 优化器 ============================
 optimizer = optim.SGD(net.parameters(), lr=LR, momentum=0.9)  # 选择优化器
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)  # 设置学习率下降策略
+scheduler = torch.optim.lr_scheduler.StepLR(
+    optimizer, step_size=10, gamma=0.1
+)  # 设置学习率下降策略
 
 # ============================ step 5/5 训练 ============================
 train_curve = list()
@@ -85,12 +91,14 @@ valid_curve = list()
 iterations = 0
 
 # 构建 SummaryWriter，用于 tensorvision 可视化数据
-writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
+writer = SummaryWriter(
+    comment="test_your_comment", filename_suffix="_test_your_filename_suffix"
+)
 
 for epoch in range(MAX_EPOCH):
-    loss_mean = 0.  # 计算每10个 batch 数据的平均 loss 值（每个iteration），每轮 epoch 都清零
-    correct = 0.  # 统计预测正确的个数，每轮 epoch 都清零
-    total = 0.  # 统计总样本数，，每轮 epoch 都清零
+    loss_mean = 0.0  # 计算每10个 batch 数据的平均 loss 值（每个iteration），每轮 epoch 都清零
+    correct = 0.0  # 统计预测正确的个数，每轮 epoch 都清零
+    total = 0.0  # 统计总样本数，，每轮 epoch 都清零
 
     net.train()
     # 遍历 train_loader 取数据，每次取出 batch_size 个数据
@@ -118,9 +126,17 @@ for epoch in range(MAX_EPOCH):
         train_curve.append(loss.item())  # 将本 batch 的 loss 值加入统计list
         if (i + 1) % log_interval == 0:
             loss_mean = loss_mean / log_interval  # 计算这10个 batch 的平均loss
-            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, i + 1, len(train_loader), loss_mean, correct / total))
-            loss_mean = 0.
+            print(
+                "Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
+                    epoch,
+                    MAX_EPOCH,
+                    i + 1,
+                    len(train_loader),
+                    loss_mean,
+                    correct / total,
+                )
+            )
+            loss_mean = 0.0
 
         # 记录数据，保存于event file
         writer.add_scalars("Train Loss mean", {"Train": loss.item()}, iterations)
@@ -128,8 +144,8 @@ for epoch in range(MAX_EPOCH):
 
     # 每个epoch，记录梯度，权值
     for name, param in net.named_parameters():
-        writer.add_histogram(name + '_grad', param.grad, epoch)
-        writer.add_histogram(name + '_data', param, epoch)
+        writer.add_histogram(name + "_grad", param.grad, epoch)
+        writer.add_histogram(name + "_data", param, epoch)
 
     scheduler.step()  # 每个 epoch 都更新学习率
 
@@ -137,9 +153,9 @@ for epoch in range(MAX_EPOCH):
     # validate the model
     if (epoch + 1) % val_interval == 0:
 
-        loss_val_mean = 0.
-        correct_val = 0.
-        total_val = 0.
+        loss_val_mean = 0.0
+        correct_val = 0.0
+        total_val = 0.0
         net.eval()
 
         with torch.no_grad():
@@ -156,26 +172,38 @@ for epoch in range(MAX_EPOCH):
 
             loss_val_mean = loss_val_mean / len(valid_loader)
             valid_curve.append(loss_val_mean)
-            print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val_mean, correct_val / total_val))
+            print(
+                "Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss mean: {:.4f} Acc:{:.2%}".format(
+                    epoch,
+                    MAX_EPOCH,
+                    j + 1,
+                    len(valid_loader),
+                    loss_val_mean,
+                    correct_val / total_val,
+                )
+            )
 
             # 记录数据，保存于event file
-            writer.add_scalars("Valid Loss mean", {"Valid": np.mean(valid_curve)}, iterations)
+            writer.add_scalars(
+                "Valid Loss mean", {"Valid": np.mean(valid_curve)}, iterations
+            )
             writer.add_scalars("Valid Accuracy", {"Valid": correct / total}, iterations)
 
 train_x = range(len(train_curve))
 train_y = train_curve
 
 train_iters = len(train_loader)
-valid_x = np.arange(1, len(valid_curve) + 1) * train_iters * val_interval  # 由于valid中记录的是epochloss，需要对记录点进行转换到iterations
+valid_x = (
+    np.arange(1, len(valid_curve) + 1) * train_iters * val_interval
+)  # 由于valid中记录的是epochloss，需要对记录点进行转换到iterations
 valid_y = valid_curve
 
-plt.plot(train_x, train_y, label='Train')
-plt.plot(valid_x, valid_y, label='Valid')
+plt.plot(train_x, train_y, label="Train")
+plt.plot(valid_x, valid_y, label="Valid")
 
-plt.legend(loc='upper right')
-plt.ylabel('loss value')
-plt.xlabel('Iteration')
+plt.legend(loc="upper right")
+plt.ylabel("loss value")
+plt.xlabel("Iteration")
 plt.show()
 
 # ============================ inference ============================

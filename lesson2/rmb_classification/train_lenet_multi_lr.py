@@ -41,21 +41,25 @@ norm_mean = [0.485, 0.456, 0.406]
 norm_std = [0.229, 0.224, 0.225]
 
 # 设置训练集的数据增强和转化
-train_transform = transforms.Compose([
-    transforms.Resize((32, 32)),
-    transforms.RandomCrop(32, padding=4),
-    transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+train_transform = transforms.Compose(
+    [
+        transforms.Resize((32, 32)),
+        transforms.RandomCrop(32, padding=4),
+        transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
 # 设置验证集的数据增强和转化，不需要 RandomCrop
-valid_transform = transforms.Compose([
-    transforms.Resize((32, 32)),
-    transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+valid_transform = transforms.Compose(
+    [
+        transforms.Resize((32, 32)),
+        transforms.Grayscale(num_output_channels=3),  # 添加灰度变换，减少颜色带来的偏差，可以泛化到第五套人民币
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
 # 构建RMBDataset实例
 train_data = RMBDataset(data_dir=train_dir, transform=train_transform)
@@ -95,9 +99,9 @@ for i_lr, lr in enumerate(LR_LIST):
     # writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
 
     for epoch in range(MAX_EPOCH):
-        loss_mean = 0.
-        correct = 0.
-        total = 0.
+        loss_mean = 0.0
+        correct = 0.0
+        total = 0.0
 
         net.train()
         # 遍历 train_loader 取数据
@@ -125,9 +129,17 @@ for i_lr, lr in enumerate(LR_LIST):
             train_curve.append(loss.item())
             if (i + 1) % log_interval == 0:
                 loss_mean = loss_mean / log_interval
-                print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                    epoch, MAX_EPOCH, i + 1, len(train_loader), loss_mean, correct / total))
-                loss_mean = 0.
+                print(
+                    "Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
+                        epoch,
+                        MAX_EPOCH,
+                        i + 1,
+                        len(train_loader),
+                        loss_mean,
+                        correct / total,
+                    )
+                )
+                loss_mean = 0.0
 
             # 记录数据，保存于event file
             # writer.add_scalars("Loss", {"Train": loss.item()}, iterations)
@@ -142,9 +154,9 @@ for i_lr, lr in enumerate(LR_LIST):
         # validate the model
         if (epoch + 1) % val_interval == 0:
 
-            correct_val = 0.
-            total_val = 0.
-            loss_val = 0.
+            correct_val = 0.0
+            total_val = 0.0
+            loss_val = 0.0
             net.eval()
             with torch.no_grad():
                 for j, data in enumerate(valid_loader):
@@ -159,8 +171,16 @@ for i_lr, lr in enumerate(LR_LIST):
                     loss_val += loss.item()
 
                 valid_curve.append(loss_val / valid_loader.__len__())
-                print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                    epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val, correct_val / total_val))
+                print(
+                    "Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
+                        epoch,
+                        MAX_EPOCH,
+                        j + 1,
+                        len(valid_loader),
+                        loss_val,
+                        correct_val / total_val,
+                    )
+                )
 
                 # # 记录数据，保存于event file
                 # writer.add_scalars("Loss", {"Valid": np.mean(valid_curve)}, iterations)
@@ -187,14 +207,14 @@ for i_lr, lr in enumerate(LR_LIST):
 
 for i, loss_r in enumerate(train_loss_rec):
     ax1 = plt.subplot(121, title="Train Loss using different LR")
-    ax1.set_xlabel('Iterations')
+    ax1.set_xlabel("Iterations")
     ax1.set_ylabel("Train Loss")
     ax1.plot(range(len(loss_r)), loss_r, label="LR = {}".format(LR_LIST[i]))
     ax1.legend()
     ax1.grid()
 for i, loss_r in enumerate(valid_loss_rec):
     ax2 = plt.subplot(122, title="Valid Loss using different LR")
-    ax2.set_xlabel('Iterations')
+    ax2.set_xlabel("Iterations")
     ax2.set_ylabel("Valid Loss")
     ax2.plot(range(len(loss_r)), loss_r, label="LR = {}".format(LR_LIST[i]))
     ax2.legend()

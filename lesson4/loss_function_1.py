@@ -20,9 +20,9 @@ target = torch.tensor([0, 1, 1], dtype=torch.long)  # 注意此处的 target 是
 flag = False
 if flag:
     # def loss function
-    loss_f_none = nn.CrossEntropyLoss(weight=None, reduction='none')
-    loss_f_sum = nn.CrossEntropyLoss(weight=None, reduction='sum')
-    loss_f_mean = nn.CrossEntropyLoss(weight=None, reduction='mean')
+    loss_f_none = nn.CrossEntropyLoss(weight=None, reduction="none")
+    loss_f_sum = nn.CrossEntropyLoss(weight=None, reduction="sum")
+    loss_f_mean = nn.CrossEntropyLoss(weight=None, reduction="mean")
 
     # forward
     loss_none = loss_f_none(inputs, target)
@@ -61,9 +61,9 @@ if flag:
     weights = torch.tensor([1, 2], dtype=torch.float)
     # weights = torch.tensor([0.7, 0.3], dtype=torch.float)
 
-    loss_f_none_w = nn.CrossEntropyLoss(weight=weights, reduction='none')
-    loss_f_sum = nn.CrossEntropyLoss(weight=weights, reduction='sum')
-    loss_f_mean = nn.CrossEntropyLoss(weight=weights, reduction='mean')
+    loss_f_none_w = nn.CrossEntropyLoss(weight=weights, reduction="none")
+    loss_f_sum = nn.CrossEntropyLoss(weight=weights, reduction="sum")
+    loss_f_mean = nn.CrossEntropyLoss(weight=weights, reduction="mean")
 
     # forward
     loss_none_w = loss_f_none_w(inputs, target)
@@ -79,9 +79,11 @@ if flag:
 flag = False
 if flag:
     weights = torch.tensor([1, 2], dtype=torch.float)
-    weights_all = np.sum(list(map(lambda x: weights.numpy()[x], target.numpy())))  # [0, 1, 1]  # [1 2 2]
+    weights_all = np.sum(
+        list(map(lambda x: weights.numpy()[x], target.numpy()))
+    )  # [0, 1, 1]  # [1 2 2]
     mean = 0
-    loss_f_none = nn.CrossEntropyLoss(reduction='none')
+    loss_f_none = nn.CrossEntropyLoss(reduction="none")
     loss_none = loss_f_none(inputs, target)
     loss_sep = loss_none.detach().numpy()
     for i in range(target.shape[0]):
@@ -97,9 +99,9 @@ flag = False
 if flag:
     weights = torch.tensor([1, 2], dtype=torch.float)
 
-    loss_f_none_w = nn.NLLLoss(weight=weights, reduction='none')
-    loss_f_sum = nn.NLLLoss(weight=weights, reduction='sum')
-    loss_f_mean = nn.NLLLoss(weight=weights, reduction='mean')
+    loss_f_none_w = nn.NLLLoss(weight=weights, reduction="none")
+    loss_f_sum = nn.NLLLoss(weight=weights, reduction="sum")
+    loss_f_mean = nn.NLLLoss(weight=weights, reduction="mean")
 
     # forward
     loss_none_w = loss_f_none_w(inputs, target)
@@ -124,9 +126,9 @@ if flag:
 
     weights = torch.tensor([1, 1], dtype=torch.float)
 
-    loss_f_none_w = nn.BCELoss(weight=weights, reduction='none')
-    loss_f_sum = nn.BCELoss(weight=weights, reduction='sum')
-    loss_f_mean = nn.BCELoss(weight=weights, reduction='mean')
+    loss_f_none_w = nn.BCELoss(weight=weights, reduction="none")
+    loss_f_sum = nn.BCELoss(weight=weights, reduction="sum")
+    loss_f_mean = nn.BCELoss(weight=weights, reduction="mean")
 
     # forward
     loss_none_w = loss_f_none_w(inputs, target_bce)
@@ -171,9 +173,9 @@ if flag:
 
     weights = torch.tensor([1, 1], dtype=torch.float)
 
-    loss_f_none_w = nn.BCEWithLogitsLoss(weight=weights, reduction='none')
-    loss_f_sum = nn.BCEWithLogitsLoss(weight=weights, reduction='sum')
-    loss_f_mean = nn.BCEWithLogitsLoss(weight=weights, reduction='mean')
+    loss_f_none_w = nn.BCEWithLogitsLoss(weight=weights, reduction="none")
+    loss_f_sum = nn.BCEWithLogitsLoss(weight=weights, reduction="sum")
+    loss_f_mean = nn.BCEWithLogitsLoss(weight=weights, reduction="mean")
 
     # forward
     loss_none_w = loss_f_none_w(inputs, target_bce)
@@ -200,9 +202,13 @@ if flag:
     weights = torch.tensor([1], dtype=torch.float)
     pos_w = torch.tensor([3], dtype=torch.float)  # 3
 
-    loss_f_none_w = nn.BCEWithLogitsLoss(weight=weights, reduction='none', pos_weight=pos_w)
-    loss_f_sum = nn.BCEWithLogitsLoss(weight=weights, reduction='sum', pos_weight=pos_w)
-    loss_f_mean = nn.BCEWithLogitsLoss(weight=weights, reduction='mean', pos_weight=pos_w)
+    loss_f_none_w = nn.BCEWithLogitsLoss(
+        weight=weights, reduction="none", pos_weight=pos_w
+    )
+    loss_f_sum = nn.BCEWithLogitsLoss(weight=weights, reduction="sum", pos_weight=pos_w)
+    loss_f_mean = nn.BCEWithLogitsLoss(
+        weight=weights, reduction="mean", pos_weight=pos_w
+    )
 
     # forward
     loss_none_w = loss_f_none_w(inputs, target_bce)

@@ -38,12 +38,12 @@ class Generator(nn.Module):
     def forward(self, input):
         return self.main(input)
 
-    def initialize_weights(self, w_mean=0., w_std=0.02, b_mean=1, b_std=0.02):
+    def initialize_weights(self, w_mean=0.0, w_std=0.02, b_mean=1, b_std=0.02):
         for m in self.modules():
             classname = m.__class__.__name__
-            if classname.find('Conv') != -1:
+            if classname.find("Conv") != -1:
                 nn.init.normal_(m.weight.data, w_mean, w_std)
-            elif classname.find('BatchNorm') != -1:
+            elif classname.find("BatchNorm") != -1:
                 nn.init.normal_(m.weight.data, b_mean, b_std)
                 nn.init.constant_(m.bias.data, 0)
 
@@ -69,18 +69,17 @@ class Discriminator(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
             # state size. (ndf*8) x 4 x 4
             nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
-            nn.Sigmoid()
+            nn.Sigmoid(),
         )
 
     def forward(self, input):
         return self.main(input)
 
-    def initialize_weights(self, w_mean=0., w_std=0.02, b_mean=1, b_std=0.02):
+    def initialize_weights(self, w_mean=0.0, w_std=0.02, b_mean=1, b_std=0.02):
         for m in self.modules():
             classname = m.__class__.__name__
-            if classname.find('Conv') != -1:
+            if classname.find("Conv") != -1:
                 nn.init.normal_(m.weight.data, w_mean, w_std)
-            elif classname.find('BatchNorm') != -1:
+            elif classname.find("BatchNorm") != -1:
                 nn.init.normal_(m.weight.data, b_mean, b_std)
                 nn.init.constant_(m.bias.data, 0)
-

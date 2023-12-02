@@ -19,7 +19,9 @@ set_seed(1)  # 设置随机种子
 flag = 0
 # flag = 1
 if flag:
-    writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
+    writer = SummaryWriter(
+        comment="test_your_comment", filename_suffix="_test_your_filename_suffix"
+    )
 
     # img 1     random
     # 随机噪声的图片
@@ -53,13 +55,17 @@ if flag:
 flag = 0
 # flag = 1
 if flag:
-    writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
+    writer = SummaryWriter(
+        comment="test_your_comment", filename_suffix="_test_your_filename_suffix"
+    )
 
     split_dir = os.path.join(enviroments.project_dir, "data", "rmb_split")
     train_dir = os.path.join(split_dir, "train")
     # train_dir = "path to your training data"
     # 先把宽高缩放到 [32， 64] 之间，然后使用 toTensor 把 Image 转化为 tensor，并把像素值缩放到 [0, 1] 之间
-    transform_compose = transforms.Compose([transforms.Resize((32, 64)), transforms.ToTensor()])
+    transform_compose = transforms.Compose(
+        [transforms.Resize((32, 64)), transforms.ToTensor()]
+    )
     train_data = RMBDataset(data_dir=train_dir, transform=transform_compose)
     train_loader = DataLoader(dataset=train_data, batch_size=16, shuffle=True)
     # 通过 next(iter()) 方法获取 data 和 label
@@ -76,7 +82,9 @@ if flag:
 # flag = 0
 flag = 1
 if flag:
-    writer = SummaryWriter(comment='test_your_comment', filename_suffix="_test_your_filename_suffix")
+    writer = SummaryWriter(
+        comment="test_your_comment", filename_suffix="_test_your_filename_suffix"
+    )
 
     # 模型
     fake_img = torch.randn(3, 3, 32, 32)

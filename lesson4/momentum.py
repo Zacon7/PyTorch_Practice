@@ -21,7 +21,7 @@ flag = 0
 if flag:
     weights = exp_w_func(beta, time_list)
 
-    plt.plot(time_list, weights, '-ro', label="Beta: {}\ny = B^t * (1-B)".format(beta))
+    plt.plot(time_list, weights, "-ro", label="Beta: {}\ny = B^t * (1-B)".format(beta))
     plt.xlabel("time")
     plt.ylabel("weight")
     plt.legend()
@@ -47,9 +47,9 @@ if flag:
 # flag = 0
 flag = 1
 if flag:
+
     def func(x):
         return torch.pow(2 * x, 2)  # y = (2x)^2 = 4*x^2        dy/dx = 8x
-
 
     iteration = 100
     m = 0.63  # .9 .63
@@ -61,9 +61,9 @@ if flag:
     iter_rec = list()
 
     for i, lr in enumerate(lr_list):
-        x = torch.tensor([2.], requires_grad=True)
+        x = torch.tensor([2.0], requires_grad=True)
 
-        momentum = 0. if lr == 0.03 else m
+        momentum = 0.0 if lr == 0.03 else m
         momentum_list.append(momentum)
 
         optimizer = optim.SGD([x], lr=lr, momentum=momentum)
@@ -78,8 +78,12 @@ if flag:
             loss_rec[i].append(y.item())
 
     for i, loss_r in enumerate(loss_rec):
-        plt.plot(range(len(loss_r)), loss_r, label="LR: {} M:{}".format(lr_list[i], momentum_list[i]))
+        plt.plot(
+            range(len(loss_r)),
+            loss_r,
+            label="LR: {} M:{}".format(lr_list[i], momentum_list[i]),
+        )
     plt.legend()
-    plt.xlabel('Iterations')
-    plt.ylabel('Loss value')
+    plt.xlabel("Iterations")
+    plt.ylabel("Loss value")
     plt.show()

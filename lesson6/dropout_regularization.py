@@ -34,18 +34,14 @@ class MLP(nn.Module):
     def __init__(self, unit_nums, d_prob=0.5):
         super(MLP, self).__init__()
         self.linears = nn.Sequential(
-
             nn.Linear(1, unit_nums),
             nn.ReLU(inplace=True),
-
             nn.Dropout(d_prob),
             nn.Linear(unit_nums, unit_nums),
             nn.ReLU(inplace=True),
-
             nn.Dropout(d_prob),
             nn.Linear(unit_nums, unit_nums),
             nn.ReLU(inplace=True),
-
             nn.Dropout(d_prob),
             nn.Linear(unit_nums, 1),
         )
@@ -54,7 +50,7 @@ class MLP(nn.Module):
         return self.linears(x)
 
 
-net_prob_0 = MLP(unit_nums=n_hidden, d_prob=0.)
+net_prob_0 = MLP(unit_nums=n_hidden, d_prob=0.0)
 net_prob_05 = MLP(unit_nums=n_hidden, d_prob=0.5)
 
 # ============================ step 3/5 优化器 ============================
@@ -66,11 +62,13 @@ loss_func = torch.nn.MSELoss()
 
 # ============================ step 5/5 迭代训练 ============================
 
-writer = SummaryWriter(comment='_test_tensorboard', filename_suffix="12345678")
+writer = SummaryWriter(comment="_test_tensorboard", filename_suffix="12345678")
 for epoch in range(max_iter):
 
     pred_normal, pred_wdecay = net_prob_0(train_x), net_prob_05(train_x)
-    loss_normal, loss_wdecay = loss_func(pred_normal, train_y), loss_func(pred_wdecay, train_y)
+    loss_normal, loss_wdecay = loss_func(pred_normal, train_y), loss_func(
+        pred_wdecay, train_y
+    )
 
     optim_normal.zero_grad()
     optim_reglar.zero_grad()
@@ -88,25 +86,61 @@ for epoch in range(max_iter):
 
         # 可视化
         for name, layer in net_prob_0.named_parameters():
-            writer.add_histogram(name + '_grad_normal', layer.grad, epoch)
-            writer.add_histogram(name + '_data_normal', layer, epoch)
+            writer.add_histogram(name + "_grad_normal", layer.grad, epoch)
+            writer.add_histogram(name + "_data_normal", layer, epoch)
 
         for name, layer in net_prob_05.named_parameters():
-            writer.add_histogram(name + '_grad_regularization', layer.grad, epoch)
-            writer.add_histogram(name + '_data_regularization', layer, epoch)
+            writer.add_histogram(name + "_grad_regularization", layer.grad, epoch)
+            writer.add_histogram(name + "_data_regularization", layer, epoch)
 
         test_pred_prob_0, test_pred_prob_05 = net_prob_0(test_x), net_prob_05(test_x)
 
         # 绘图
-        plt.scatter(train_x.data.numpy(), train_y.data.numpy(), c='blue', s=50, alpha=0.3, label='train')
-        plt.scatter(test_x.data.numpy(), test_y.data.numpy(), c='red', s=50, alpha=0.3, label='test')
-        plt.plot(test_x.data.numpy(), test_pred_prob_0.data.numpy(), 'r-', lw=3, label='d_prob_0')
-        plt.plot(test_x.data.numpy(), test_pred_prob_05.data.numpy(), 'b--', lw=3, label='d_prob_05')
-        plt.text(-0.25, -1.5, 'd_prob_0 loss={:.8f}'.format(loss_normal.item()), fontdict={'size': 15, 'color': 'red'})
-        plt.text(-0.25, -2, 'd_prob_05 loss={:.6f}'.format(loss_wdecay.item()), fontdict={'size': 15, 'color': 'red'})
+        plt.scatter(
+            train_x.data.numpy(),
+            train_y.data.numpy(),
+            c="blue",
+            s=50,
+            alpha=0.3,
+            label="train",
+        )
+        plt.scatter(
+            test_x.data.numpy(),
+            test_y.data.numpy(),
+            c="red",
+            s=50,
+            alpha=0.3,
+            label="test",
+        )
+        plt.plot(
+            test_x.data.numpy(),
+            test_pred_prob_0.data.numpy(),
+            "r-",
+            lw=3,
+            label="d_prob_0",
+        )
+        plt.plot(
+            test_x.data.numpy(),
+            test_pred_prob_05.data.numpy(),
+            "b--",
+            lw=3,
+            label="d_prob_05",
+        )
+        plt.text(
+            -0.25,
+            -1.5,
+            "d_prob_0 loss={:.8f}".format(loss_normal.item()),
+            fontdict={"size": 15, "color": "red"},
+        )
+        plt.text(
+            -0.25,
+            -2,
+            "d_prob_05 loss={:.6f}".format(loss_wdecay.item()),
+            fontdict={"size": 15, "color": "red"},
+        )
 
         plt.ylim((-2.5, 2.5))
-        plt.legend(loc='upper left')
+        plt.legend(loc="upper left")
         plt.title("Epoch: {}".format(epoch + 1))
         plt.show()
         plt.close()

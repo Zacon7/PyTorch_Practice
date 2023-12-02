@@ -12,7 +12,7 @@ set_seed(1)  # 设置随机种子
 
 # ================================= load img ==================================
 path_img = os.path.join(os.path.dirname(os.path.abspath(__file__)), "imgs/lena.png")
-img = Image.open(path_img).convert('RGB')  # 0~255
+img = Image.open(path_img).convert("RGB")  # 0~255
 
 # convert PIL to tensor
 img_transform = transforms.Compose([transforms.ToTensor()])
@@ -66,12 +66,11 @@ if flag:
 flag = True
 # flag = False
 if flag:
-    inputs = torch.tensor([[1., 2, 3]])
+    inputs = torch.tensor([[1.0, 2, 3]])
     linear_layer = nn.Linear(3, 4)
-    linear_layer.weight.data = torch.tensor([[1., 1., 1.],
-                                             [2., 2., 2.],
-                                             [3., 3., 3.],
-                                             [4., 4., 4.]])
+    linear_layer.weight.data = torch.tensor(
+        [[1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0], [4.0, 4.0, 4.0]]
+    )
 
     linear_layer.bias.data.fill_(0.5)
     output = linear_layer(inputs)

@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 from my_dataset import CelebADataset
 from dcgan import Discriminator, Generator
 import enviroments
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -26,7 +27,7 @@ out_dir = os.path.join(BASE_DIR, "..", "log_gan")
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-ngpu = 0    # Number of GPUs available. Use 0 for CPU mode.
+ngpu = 0  # Number of GPUs available. Use 0 for CPU mode.
 IS_PARALLEL = True if ngpu > 1 else False
 checkpoint_interval = 10
 
@@ -34,27 +35,32 @@ image_size = 64
 nc = 3
 nz = 100
 ngf = 128  # 64
-ndf = 128   # 64
+ndf = 128  # 64
 num_epochs = 20
 fixed_noise = torch.randn(64, nz, 1, 1, device=device)
 
-real_idx = 1    # 0.9
-fake_idx = 0    # 0.1
+real_idx = 1  # 0.9
+fake_idx = 0  # 0.1
 
 lr = 0.0002
 batch_size = 64
 beta1 = 0.5
 
-d_transforms = transforms.Compose([transforms.Resize(image_size),
-                   transforms.CenterCrop(image_size),
-                   transforms.ToTensor(),
-                   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),  # -1 ,1
-               ])
-if __name__ == '__main__':
+d_transforms = transforms.Compose(
+    [
+        transforms.Resize(image_size),
+        transforms.CenterCrop(image_size),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),  # -1 ,1
+    ]
+)
+if __name__ == "__main__":
     # step 1: data
 
     train_set = CelebADataset(data_dir=data_dir, transforms=d_transforms)
-    train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=2, shuffle=True)
+    train_loader = DataLoader(
+        train_set, batch_size=batch_size, num_workers=2, shuffle=True
+    )
 
     # show train img
     flag = 0
@@ -62,7 +68,14 @@ if __name__ == '__main__':
     if flag:
         img_bchw = next(iter(train_loader))
         plt.title("Training Images")
-        plt.imshow(np.transpose(vutils.make_grid(img_bchw.to(device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
+        plt.imshow(
+            np.transpose(
+                vutils.make_grid(
+                    img_bchw.to(device)[:64], padding=2, normalize=True
+                ).cpu(),
+                (1, 2, 0),
+            )
+        )
         plt.show()
         plt.close()
 
@@ -134,8 +147,8 @@ if __name__ == '__main__':
             optimizerD.step()
 
             # record probability
-            d_x = out_d_real.mean().item()      # D(x)
-            d_g_z1 = out_d_fake.mean().item()   # D(G(z1))
+            d_x = out_d_real.mean().item()  # D(x)
+            d_g_z1 = out_d_fake.mean().item()  # D(G(z1))
 
             ############################
             # (2) Update G network
@@ -154,9 +167,20 @@ if __name__ == '__main__':
 
             # Output training stats
             if i % 10 == 0:
-                print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
-                      % (epoch, num_epochs, i, len(train_loader),
-                         loss_d.item(), loss_g.item(), d_x, d_g_z1, d_g_z2))
+                print(
+                    "[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f"
+                    % (
+                        epoch,
+                        num_epochs,
+                        i,
+                        len(train_loader),
+                        loss_d.item(),
+                        loss_g.item(),
+                        d_x,
+                        d_g_z1,
+                        d_g_z2,
+                    )
+                )
 
             # Save Losses for plotting later
             G_losses.append(loss_g.item())
@@ -176,12 +200,16 @@ if __name__ == '__main__':
         plt.savefig(os.path.join(out_dir, "{}_epoch.png".format(epoch)))
 
         # checkpoint
-        if (epoch+1) % checkpoint_interval == 0:
+        if (epoch + 1) % checkpoint_interval == 0:
 
-            checkpoint = {"g_model_state_dict": net_g.state_dict(),
-                          "d_model_state_dict": net_d.state_dict(),
-                          "epoch": epoch}
-            path_checkpoint = os.path.join(out_dir, "checkpoint_{}_epoch.pkl".format(epoch))
+            checkpoint = {
+                "g_model_state_dict": net_g.state_dict(),
+                "d_model_state_dict": net_d.state_dict(),
+                "epoch": epoch,
+            }
+            path_checkpoint = os.path.join(
+                out_dir, "checkpoint_{}_epoch.pkl".format(epoch)
+            )
             torch.save(checkpoint, path_checkpoint)
 
     # plot loss
@@ -196,7 +224,10 @@ if __name__ == '__main__':
     plt.savefig(os.path.join(out_dir, "loss.png"))
 
     # save gif
-    imgs_epoch = [int(name.split("_")[0]) for name in list(filter(lambda x: x.endswith("epoch.png"), os.listdir(out_dir)))]
+    imgs_epoch = [
+        int(name.split("_")[0])
+        for name in list(filter(lambda x: x.endswith("epoch.png"), os.listdir(out_dir)))
+    ]
     imgs_epoch = sorted(imgs_epoch)
 
     imgs = list()
@@ -207,4 +238,3 @@ if __name__ == '__main__':
     imageio.mimsave(os.path.join(out_dir, "generation_animation.gif"), imgs, fps=2)
 
     print("done")
-

@@ -41,11 +41,20 @@ for iteration in range(1000):
     if iteration % 20 == 0:
 
         plt.scatter(x.data.numpy(), y.data.numpy())
-        plt.plot(x.data.numpy(), y_pred.data.numpy(), 'r-', lw=5)
-        plt.text(2, 20, 'Loss=%.4f' % loss.data.numpy(), fontdict={'size': 20, 'color': 'red'})
+        plt.plot(x.data.numpy(), y_pred.data.numpy(), "r-", lw=5)
+        plt.text(
+            2,
+            20,
+            "Loss=%.4f" % loss.data.numpy(),
+            fontdict={"size": 20, "color": "red"},
+        )
         plt.xlim(1.5, 10)
         plt.ylim(8, 28)
-        plt.title("Iteration: {}\nw: {} b: {}".format(iteration, w.data.numpy(), b.data.numpy()))
+        plt.title(
+            "Iteration: {}\nw: {} b: {}".format(
+                iteration, w.data.numpy(), b.data.numpy()
+            )
+        )
         plt.show()
 
         # 如果 MSE 小于 1，则停止训练

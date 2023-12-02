@@ -65,8 +65,12 @@ for iteration in range(1000):
         correct = (mask == train_y).sum()  # 计算正确预测的样本个数
         acc = correct.item() / train_y.size(0)  # 计算分类准确率
 
-        plt.scatter(x0.data.numpy()[:, 0], x0.data.numpy()[:, 1], c='r', label='class 0')
-        plt.scatter(x1.data.numpy()[:, 0], x1.data.numpy()[:, 1], c='b', label='class 1')
+        plt.scatter(
+            x0.data.numpy()[:, 0], x0.data.numpy()[:, 1], c="r", label="class 0"
+        )
+        plt.scatter(
+            x1.data.numpy()[:, 0], x1.data.numpy()[:, 1], c="b", label="class 1"
+        )
 
         w0, w1 = lr_net.features.weight[0]
         w0, w1 = float(w0.item()), float(w1.item())
@@ -78,9 +82,17 @@ for iteration in range(1000):
         plt.ylim(0, 10)
         plt.plot(plot_x0, plot_x1)
 
-        plt.text(-5, 5, 'Loss=%.4f' % loss.data.numpy(), fontdict={'size': 20, 'color': 'red'})
+        plt.text(
+            -5,
+            5,
+            "Loss=%.4f" % loss.data.numpy(),
+            fontdict={"size": 20, "color": "red"},
+        )
         plt.title(
-            "Iteration: {},  accuracy:{:.2%}\nw0:{:.2f}  w1:{:.2f}  b: {:.2f}".format(iteration, acc, w0, w1, plot_b))
+            "Iteration: {},  accuracy:{:.2%}\nw0:{:.2f}  w1:{:.2f}  b: {:.2f}".format(
+                iteration, acc, w0, w1, plot_b
+            )
+        )
         plt.legend()
         # plt.savefig(str(iteration // 20) + ".png")
         plt.show()

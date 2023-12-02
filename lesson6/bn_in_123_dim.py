@@ -18,11 +18,15 @@ if flag:
     num_features = 5
     momentum = 0.3
 
-    features_shape = (1, )
+    features_shape = (1,)
 
     feature_map = torch.ones(features_shape)  # 1D
-    feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 2D
-    feature_maps_bs = torch.stack([feature_maps for i in range(batch_size)], dim=0)  # 3D
+    feature_maps = torch.stack(
+        [feature_map * (i + 1) for i in range(num_features)], dim=0
+    )  # 2D
+    feature_maps_bs = torch.stack(
+        [feature_maps for i in range(batch_size)], dim=0
+    )  # 3D
     print("input data:\n{} shape is {}".format(feature_maps_bs, feature_maps_bs.shape))
 
     bn = nn.BatchNorm1d(num_features=num_features, momentum=momentum)
@@ -53,8 +57,12 @@ if flag:
     features_shape = (2, 2)
 
     feature_map = torch.ones(features_shape)  # 2D
-    feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 3D
-    feature_maps_bs = torch.stack([feature_maps for i in range(batch_size)], dim=0)  # 4D
+    feature_maps = torch.stack(
+        [feature_map * (i + 1) for i in range(num_features)], dim=0
+    )  # 3D
+    feature_maps_bs = torch.stack(
+        [feature_maps for i in range(batch_size)], dim=0
+    )  # 4D
 
     # print("input data:\n{} shape is {}".format(feature_maps_bs, feature_maps_bs.shape))
 
@@ -83,7 +91,9 @@ if flag:
     features_shape = (2, 2, 3)
 
     feature = torch.ones(features_shape)  # 3D
-    feature_map = torch.stack([feature * (i + 1) for i in range(num_features)], dim=0)  # 4D
+    feature_map = torch.stack(
+        [feature * (i + 1) for i in range(num_features)], dim=0
+    )  # 4D
     feature_maps = torch.stack([feature_map for i in range(batch_size)], dim=0)  # 5D
 
     # print("input data:\n{} shape is {}".format(feature_maps, feature_maps.shape))

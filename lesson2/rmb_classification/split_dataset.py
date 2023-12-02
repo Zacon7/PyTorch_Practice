@@ -12,7 +12,7 @@ def makedir(new_dir):
         os.makedirs(new_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random.seed(1)
 
     dataset_dir = os.path.join(project_dir, "data", "RMB_data")  # 'data\\RMB_data'
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         # 文件列表
         imgs = os.listdir(os.path.join(dataset_dir, sub_dir))
         # 取出 jpg 结尾的文件
-        imgs = list(filter(lambda x: x.endswith('.jpg'), imgs))
+        imgs = list(filter(lambda x: x.endswith(".jpg"), imgs))
         random.shuffle(imgs)
         # 计算图片数量
         img_count = len(imgs)
@@ -59,5 +59,8 @@ if __name__ == '__main__':
             # 复制
             shutil.copy(src_path, target_path)
 
-        print('Class:{}, train:{}, valid:{}, test:{}'.format(sub_dir, train_point, valid_point - train_point,
-                                                             img_count - valid_point))
+        print(
+            "Class:{}, train:{}, valid:{}, test:{}".format(
+                sub_dir, train_point, valid_point - train_point, img_count - valid_point
+            )
+        )

@@ -10,6 +10,7 @@ from common_tools import set_seed
 from torch.utils.data import DataLoader
 from my_dataset import CelebADataset
 from dcgan import Discriminator, Generator
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -20,10 +21,11 @@ def remove_module(state_dict_g):
 
     new_state_dict = OrderedDict()
     for k, v in state_dict_g.items():
-        namekey = k[7:] if k.startswith('module.') else k
+        namekey = k[7:] if k.startswith("module.") else k
         new_state_dict[namekey] = v
 
     return new_state_dict
+
 
 set_seed(1)  # 设置随机种子
 
@@ -36,11 +38,14 @@ nz = 100
 ngf = 128
 ndf = 128
 
-d_transforms = transforms.Compose([transforms.Resize(image_size),
-                   transforms.CenterCrop(image_size),
-                   transforms.ToTensor(),
-                   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-               ])
+d_transforms = transforms.Compose(
+    [
+        transforms.Resize(image_size),
+        transforms.CenterCrop(image_size),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+    ]
+)
 
 # step 1: data
 fixed_noise = torch.randn(num_img, nz, 1, 1, device=device)
@@ -52,7 +57,7 @@ if flag:
     single_noise = torch.randn(1, nz, 1, 1, device=device)
     for i in range(num_img):
         add_noise = single_noise
-        add_noise = add_noise[0, z_idx, 0, 0] + i*0.01
+        add_noise = add_noise[0, z_idx, 0, 0] + i * 0.01
         fixed_noise[i, ...] = add_noise
 
 # step 2: model

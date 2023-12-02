@@ -2,8 +2,8 @@
 
 import torch
 
-w = torch.tensor([1.], requires_grad=True)
-x = torch.tensor([2.], requires_grad=True)
+w = torch.tensor([1.0], requires_grad=True)
+x = torch.tensor([2.0], requires_grad=True)
 # y=(x+w)*(w+1)
 a = torch.add(w, x)  # retain_grad()
 b = torch.add(w, 1)

@@ -10,7 +10,9 @@ set_seed(1)  # 设置随机种子
 class MLP(nn.Module):
     def __init__(self, unit_nums, layer_nums=100):
         super(MLP, self).__init__()
-        self.linears = nn.ModuleList([nn.Linear(unit_nums, unit_nums, bias=False) for i in range(layer_nums)])
+        self.linears = nn.ModuleList(
+            [nn.Linear(unit_nums, unit_nums, bias=False) for i in range(layer_nums)]
+        )
         self.bn = nn.ModuleList([nn.BatchNorm1d(unit_nums) for i in range(layer_nums)])
         self.unit_nums = unit_nums
 
@@ -24,7 +26,11 @@ class MLP(nn.Module):
                 print("output is nan in {} layers".format(i))
                 break
 
-            print("layers:{},\t mean: {},\t std: {}".format(i, x.mean().item(), x.std().item()))
+            print(
+                "layers:{},\t mean: {},\t std: {}".format(
+                    i, x.mean().item(), x.std().item()
+                )
+            )
 
         return x
 

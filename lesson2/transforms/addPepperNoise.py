@@ -33,16 +33,20 @@ class AddPepperNoise(object):
             # 信噪比
             signal_pct = self.snr
             # 椒盐噪声的比例 = 1 -信噪比
-            noise_pct = (1 - self.snr)
+            noise_pct = 1 - self.snr
             # 选择的值为 (0, 1, 2)，每个取值的概率分别为 [signal_pct, noise_pct/2., noise_pct/2.]
             # 椒噪声和盐噪声分别占 noise_pct 的一半
             # 1 为盐噪声，2 为 椒噪声
-            mask = np.random.choice((0, 1, 2), size=(h, w, 1), p=[signal_pct, noise_pct / 2., noise_pct / 2.])
+            mask = np.random.choice(
+                (0, 1, 2),
+                size=(h, w, 1),
+                p=[signal_pct, noise_pct / 2.0, noise_pct / 2.0],
+            )
             mask = np.repeat(mask, c, axis=2)
             img_[mask == 1] = 255  # 盐噪声
             img_[mask == 2] = 0  # 椒噪声
             # 再转换为 image
-            return Image.fromarray(img_.astype('uint8')).convert('RGB')
+            return Image.fromarray(img_.astype("uint8")).convert("RGB")
         # 如果随机概率大于 self.p，则直接返回原图
         else:
             return img

@@ -45,7 +45,7 @@ if flag:
     out_t = torch.tensor([1])
     # 这里制定了 out
     t = torch.zeros((3, 3), out=out_t)
-    print(t, '\n', out_t)
+    print(t, "\n", out_t)
     # id 是取内存地址。最终 t 和 out_t 是同一个内存地址
     print(id(t), id(out_t), id(t) == id(out_t))
 

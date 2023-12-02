@@ -32,14 +32,14 @@ if flag:
     inputs = torch.ones((2, 2))
     target = torch.ones((2, 2)) * 3
 
-    loss_f = nn.L1Loss(reduction='none')
+    loss_f = nn.L1Loss(reduction="none")
     loss = loss_f(inputs, target)
 
     print("input:{}\ntarget:{}\nL1 loss:{}".format(inputs, target, loss))
 
     # ------------------------------------------------- 6 MSE loss ----------------------------------------------
 
-    loss_f_mse = nn.MSELoss(reduction='none')
+    loss_f_mse = nn.MSELoss(reduction="none")
     loss_mse = loss_f_mse(inputs, target)
 
     print("MSE loss:{}".format(loss_mse))
@@ -51,15 +51,15 @@ if flag:
     inputs = torch.linspace(-3, 3, steps=500)
     target = torch.zeros_like(inputs)
 
-    loss_f = nn.SmoothL1Loss(reduction='none')
+    loss_f = nn.SmoothL1Loss(reduction="none")
     loss_smooth = loss_f(inputs, target)
 
     loss_l1 = np.abs(target.numpy() - inputs.numpy())
 
-    plt.plot(inputs.numpy(), loss_smooth.numpy(), label='Smooth L1 Loss')
-    plt.plot(inputs.numpy(), loss_l1, label='L1 loss')
-    plt.xlabel('x_i - y_i')
-    plt.ylabel('loss value')
+    plt.plot(inputs.numpy(), loss_smooth.numpy(), label="Smooth L1 Loss")
+    plt.plot(inputs.numpy(), loss_l1, label="L1 loss")
+    plt.xlabel("x_i - y_i")
+    plt.ylabel("loss value")
     plt.legend()
     plt.grid()
     plt.show()
@@ -71,7 +71,7 @@ if flag:
     inputs = torch.randn((2, 2))
     target = torch.randn((2, 2))
 
-    loss_f = nn.PoissonNLLLoss(log_input=True, full=False, reduction='none')
+    loss_f = nn.PoissonNLLLoss(log_input=True, full=False, reduction="none")
     loss = loss_f(inputs, target)
     print("input:{}\ntarget:{}\nPoisson NLL loss:{}".format(inputs, target, loss))
 
@@ -93,15 +93,19 @@ if flag:
     inputs_log = torch.log(inputs)
     target = torch.tensor([[0.9, 0.05, 0.05], [0.1, 0.7, 0.2]], dtype=torch.float)
 
-    loss_f_none = nn.KLDivLoss(reduction='none')
-    loss_f_mean = nn.KLDivLoss(reduction='mean')
-    loss_f_bs_mean = nn.KLDivLoss(reduction='batchmean')
+    loss_f_none = nn.KLDivLoss(reduction="none")
+    loss_f_mean = nn.KLDivLoss(reduction="mean")
+    loss_f_bs_mean = nn.KLDivLoss(reduction="batchmean")
 
     loss_none = loss_f_none(inputs, target)
     loss_mean = loss_f_mean(inputs, target)
     loss_bs_mean = loss_f_bs_mean(inputs, target)
 
-    print("loss_none:\n{}\nloss_mean:\n{}\nloss_bs_mean:\n{}".format(loss_none, loss_mean, loss_bs_mean))
+    print(
+        "loss_none:\n{}\nloss_mean:\n{}\nloss_bs_mean:\n{}".format(
+            loss_none, loss_mean, loss_bs_mean
+        )
+    )
 
 # --------------------------------- compute by hand
 # flag = True
@@ -122,7 +126,7 @@ if flag:
 
     target = torch.tensor([1, 1, -1], dtype=torch.float)
 
-    loss_f_none = nn.MarginRankingLoss(margin=0, reduction='none')
+    loss_f_none = nn.MarginRankingLoss(margin=0, reduction="none")
 
     loss = loss_f_none(x1, x2, target)
 
@@ -135,7 +139,7 @@ if flag:
     x = torch.tensor([[0.1, 0.2, 0.4, 0.8]])
     y = torch.tensor([[0, 3, -1, -1]], dtype=torch.long)
 
-    loss_f = nn.MultiLabelMarginLoss(reduction='none')
+    loss_f = nn.MultiLabelMarginLoss(reduction="none")
 
     loss = loss_f(x, y)
 
@@ -160,7 +164,7 @@ if flag:
     inputs = torch.tensor([[0.3, 0.7], [0.5, 0.5]])
     target = torch.tensor([[-1, 1], [1, -1]], dtype=torch.float)
 
-    loss_f = nn.SoftMarginLoss(reduction='none')
+    loss_f = nn.SoftMarginLoss(reduction="none")
 
     loss = loss_f(inputs, target)
 
@@ -186,7 +190,7 @@ if flag:
     inputs = torch.tensor([[0.3, 0.7, 0.8]])
     target = torch.tensor([[0, 1, 1]], dtype=torch.float)
 
-    loss_f = nn.MultiLabelSoftMarginLoss(reduction='none')
+    loss_f = nn.MultiLabelSoftMarginLoss(reduction="none")
 
     loss = loss_f(inputs, target)
 
@@ -212,7 +216,7 @@ if flag:
     x = torch.tensor([[0.1, 0.2, 0.7], [0.2, 0.5, 0.3]])
     y = torch.tensor([1, 2], dtype=torch.long)
 
-    loss_f = nn.MultiMarginLoss(reduction='none')
+    loss_f = nn.MultiMarginLoss(reduction="none")
 
     loss = loss_f(x, y)
 
@@ -237,8 +241,8 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    anchor = torch.tensor([[1.]])
-    pos = torch.tensor([[2.]])
+    anchor = torch.tensor([[1.0]])
+    pos = torch.tensor([[2.0]])
     neg = torch.tensor([[0.5]])
 
     loss_f = nn.TripletMarginLoss(margin=1.0, p=1)
@@ -265,10 +269,10 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    inputs = torch.tensor([[1., 0.8, 0.5]])
+    inputs = torch.tensor([[1.0, 0.8, 0.5]])
     target = torch.tensor([[1, 1, -1]])
 
-    loss_f = nn.HingeEmbeddingLoss(margin=1, reduction='none')
+    loss_f = nn.HingeEmbeddingLoss(margin=1, reduction="none")
 
     loss = loss_f(inputs, target)
 
@@ -278,7 +282,7 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    margin = 1.
+    margin = 1.0
     loss = max(0, margin - inputs.numpy()[0, 2])
 
     print(loss)
@@ -292,7 +296,7 @@ if flag:
 
     target = torch.tensor([[1, -1]], dtype=torch.float)
 
-    loss_f = nn.CosineEmbeddingLoss(margin=0., reduction='none')
+    loss_f = nn.CosineEmbeddingLoss(margin=0.0, reduction="none")
 
     loss = loss_f(x1, x2, target)
 
@@ -302,14 +306,12 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    margin = 0.
-
+    margin = 0.0
 
     def cosine(a, b):
         numerator = torch.dot(a, b)
         denominator = torch.norm(a, 2) * torch.norm(b, 2)
         return float(numerator / denominator)
-
 
     l_1 = 1 - (cosine(x1[0], x2[0]))
 

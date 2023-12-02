@@ -12,10 +12,18 @@ flag = 0
 # flag = 1
 if flag:
     tensor_cpu = torch.ones((3, 3))
-    print("tensor_cpu:\ndevice: {} is_cuda: {} id: {}".format(tensor_cpu.device, tensor_cpu.is_cuda, id(tensor_cpu)))
+    print(
+        "tensor_cpu:\ndevice: {} is_cuda: {} id: {}".format(
+            tensor_cpu.device, tensor_cpu.is_cuda, id(tensor_cpu)
+        )
+    )
 
     tensor_gpu = tensor_cpu.to(device)
-    print("tensor_gpu:\ndevice: {} is_cuda: {} id: {}".format(tensor_gpu.device, tensor_gpu.is_cuda, id(tensor_gpu)))
+    print(
+        "tensor_gpu:\ndevice: {} is_cuda: {} id: {}".format(
+            tensor_gpu.device, tensor_gpu.is_cuda, id(tensor_gpu)
+        )
+    )
 
 # ========================== module to cuda
 flag = 0

@@ -13,7 +13,7 @@ class Net(nn.Module):
         self.linears = nn.Sequential(
             nn.Dropout(d_prob),
             nn.Linear(unit_nums, 1, bias=False),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
@@ -24,7 +24,7 @@ input_num = 10000
 x = torch.ones((input_num,), dtype=torch.float32)
 
 net = Net(input_num, d_prob=0.5)
-net.linears[1].weight.detach().fill_(1.)
+net.linears[1].weight.detach().fill_(1.0)
 
 net.train()
 y = net(x)

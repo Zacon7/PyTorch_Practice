@@ -10,9 +10,8 @@ from matplotlib import pyplot as plt
 import torchvision.models as models
 import enviroments
 import torchsummary
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cpu")
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # config
 vis = True
@@ -22,12 +21,14 @@ vis_row = 4
 norm_mean = [0.485, 0.456, 0.406]
 norm_std = [0.229, 0.224, 0.225]
 
-inference_transform = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+inference_transform = transforms.Compose(
+    [
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
 classes = ["ants", "bees"]
 
@@ -64,20 +65,19 @@ def get_img_name(img_dir, format="jpg"):
 
 
 def get_model(m_path, vis_model=False):
-
     resnet18 = models.resnet18()
-    # torchsummary.summary(resnet18, (3,224,224))
+
     # 修改全连接层的输出
     num_ftrs = resnet18.fc.in_features
     resnet18.fc = nn.Linear(num_ftrs, 2)
 
     # 加载模型参数
     checkpoint = torch.load(m_path)
-    resnet18.load_state_dict(checkpoint['model_state_dict'])
-
+    resnet18.load_state_dict(checkpoint["model_state_dict"])
 
     if vis_model:
         from torchsummary import summary
+
         summary(resnet18, input_size=(3, 224, 224), device="cpu")
 
     return resnet18
@@ -85,7 +85,7 @@ def get_model(m_path, vis_model=False):
 
 if __name__ == "__main__":
 
-    img_dir = os.path.join(enviroments.hymenoptera_data_dir,"val/bees")
+    img_dir = os.path.join(enviroments.hymenoptera_data_dir, "val/bees")
     model_path = "./checkpoint_14_epoch.pkl"
     time_total = 0
     img_list, img_pred = list(), list()
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             path_img = os.path.join(img_dir, img_name)
 
             # step 1/4 : path --> img
-            img_rgb = Image.open(path_img).convert('RGB')
+            img_rgb = Image.open(path_img).convert("RGB")
 
             # step 2/4 : img --> tensor
             img_tensor = img_transform(img_rgb, inference_transform)
@@ -125,21 +125,23 @@ if __name__ == "__main__":
                 img_list.append(img_rgb)
                 img_pred.append(pred_str)
 
-                if (idx+1) % (vis_row*vis_row) == 0 or num_img == idx+1:
+                if (idx + 1) % (vis_row * vis_row) == 0 or num_img == idx + 1:
                     for i in range(len(img_list)):
-                        plt.subplot(vis_row, vis_row, i+1).imshow(img_list[i])
+                        plt.subplot(vis_row, vis_row, i + 1).imshow(img_list[i])
                         plt.title("predict:{}".format(img_pred[i]))
                     plt.show()
                     plt.close()
                     img_list, img_pred = list(), list()
 
-            time_s = time_toc-time_tic
+            time_s = time_toc - time_tic
             time_total += time_s
 
-            print('{:d}/{:d}: {} {:.3f}s '.format(idx + 1, num_img, img_name, time_s))
+            print("{:d}/{:d}: {} {:.3f}s ".format(idx + 1, num_img, img_name, time_s))
 
-    print("\ndevice:{} total time:{:.1f}s mean:{:.3f}s".
-          format(device, time_total, time_total/num_img))
+    print(
+        "\ndevice:{} total time:{:.1f}s mean:{:.3f}s".format(
+            device, time_total, time_total / num_img
+        )
+    )
     if torch.cuda.is_available():
         print("GPU name:{}".format(torch.cuda.get_device_name()))
-

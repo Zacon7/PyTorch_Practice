@@ -31,7 +31,10 @@ if flag:
     print("weight after step:{}".format(weight.data))
 
     print(
-        "weight in optimizer:{}\nweight in weight:{}\n".format(id(optimizer.param_groups[0]['params'][0]), id(weight)))
+        "weight in optimizer:{}\nweight in weight:{}\n".format(
+            id(optimizer.param_groups[0]["params"][0]), id(weight)
+        )
+    )
 
     print("weight.grad is {}\n".format(weight.grad))
     optimizer.zero_grad()
@@ -45,7 +48,7 @@ if flag:
 
     w2 = torch.randn((3, 3), requires_grad=True)
 
-    optimizer.add_param_group({"params": w2, 'lr': 0.0001})
+    optimizer.add_param_group({"params": w2, "lr": 0.0001})
 
     print("optimizer.param_groups is\n{}".format(optimizer.param_groups))
 
@@ -64,7 +67,9 @@ if flag:
 
     print("state_dict after step:\n", optimizer.state_dict())
 
-    torch.save(optimizer.state_dict(), os.path.join(BASE_DIR, "optimizer_state_dict.pkl"))
+    torch.save(
+        optimizer.state_dict(), os.path.join(BASE_DIR, "optimizer_state_dict.pkl")
+    )
 
 # -----------------------------------load state_dict -----------------------------------
 # flag = 0

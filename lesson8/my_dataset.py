@@ -21,7 +21,12 @@ class PennFudanDataset(object):
         self.img_dir = os.path.join(data_dir, "PNGImages")
         self.txt_dir = os.path.join(data_dir, "Annotation")
         # 保存所有图片的文件名，后面用于查找对应的 txt 标签文件
-        self.names = [name[:-4] for name in list(filter(lambda x: x.endswith(".png"), os.listdir(self.img_dir)))]
+        self.names = [
+            name[:-4]
+            for name in list(
+                filter(lambda x: x.endswith(".png"), os.listdir(self.img_dir))
+            )
+        ]
 
     def __getitem__(self, index):
         """
@@ -40,6 +45,7 @@ class PennFudanDataset(object):
         # load boxes and label
         f = open(path_txt, "r")
         import re
+
         # 查找每一行是否有数字，有数字的则是带有标签的行
         points = [re.findall(r"\d+", line) for line in f.readlines() if "Xmin" in line]
         boxes_list = list()
@@ -63,20 +69,29 @@ class PennFudanDataset(object):
 
     def __len__(self):
         if len(self.names) == 0:
-            raise Exception("\ndata_dir:{} is a empty dir! Please checkout your path to images!".format(data_dir))
+            raise Exception(
+                "\ndata_dir:{} is a empty dir! Please checkout your path to images!".format(
+                    data_dir
+                )
+            )
         return len(self.names)
 
-class CelebADataset(object):
 
+class CelebADataset(object):
     def __init__(self, data_dir, transforms):
 
         self.data_dir = data_dir
         self.transform = transforms
-        self.img_names = [name for name in list(filter(lambda x: x.endswith(".jpg"), os.listdir(self.data_dir)))]
+        self.img_names = [
+            name
+            for name in list(
+                filter(lambda x: x.endswith(".jpg"), os.listdir(self.data_dir))
+            )
+        ]
 
     def __getitem__(self, index):
         path_img = os.path.join(self.data_dir, self.img_names[index])
-        img = Image.open(path_img).convert('RGB')
+        img = Image.open(path_img).convert("RGB")
 
         if self.transform is not None:
             img = self.transform(img)
@@ -85,5 +100,9 @@ class CelebADataset(object):
 
     def __len__(self):
         if len(self.img_names) == 0:
-            raise Exception("\ndata_dir:{} is a empty dir! Please checkout your path to images!".format(self.data_dir))
+            raise Exception(
+                "\ndata_dir:{} is a empty dir! Please checkout your path to images!".format(
+                    self.data_dir
+                )
+            )
         return len(self.img_names)

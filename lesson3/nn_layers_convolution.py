@@ -11,7 +11,7 @@ set_seed(3)  # 设置随机种子
 
 # ================================= load img ==================================
 path_img = os.path.join(os.path.dirname(os.path.abspath(__file__)), "imgs", "lena.png")
-img = Image.open(path_img).convert('RGB')  # 0~255
+img = Image.open(path_img).convert("RGB")  # 0~255
 
 # convert to tensor
 img_transform = transforms.Compose([transforms.ToTensor()])
@@ -48,5 +48,5 @@ print("卷积前尺寸: {}\n卷积后尺寸: {}".format(img_tensor.shape, img_co
 img_raw = transform_invert(img_tensor[0, ...], img_transform)
 img_conv = transform_invert(img_conv[0, ...], img_transform)
 plt.subplot(121).imshow(img_raw)
-plt.subplot(122).imshow(img_conv, cmap='gray')
+plt.subplot(122).imshow(img_conv, cmap="gray")
 plt.show()

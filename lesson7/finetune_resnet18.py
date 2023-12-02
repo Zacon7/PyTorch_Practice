@@ -39,19 +39,23 @@ valid_dir = os.path.join(data_dir, "val")
 norm_mean = [0.485, 0.456, 0.406]
 norm_std = [0.229, 0.224, 0.225]
 
-train_transform = transforms.Compose([
-    transforms.RandomResizedCrop(224, scale=(0.64, 1)),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+train_transform = transforms.Compose(
+    [
+        transforms.RandomResizedCrop(224, scale=(0.64, 1)),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
-valid_transform = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    transforms.Normalize(norm_mean, norm_std),
-])
+valid_transform = transforms.Compose(
+    [
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(norm_mean, norm_std),
+    ]
+)
 
 # 构建MyDataset实例
 train_data = AntsDataset(data_dir=train_dir, transform=train_transform)
@@ -101,16 +105,25 @@ if flag_m2:
     # 首先获取全连接层参数的地址
     fc_params_id = list(map(id, resnet18_ft.fc.parameters()))  # 返回的是parameters的 内存地址
     # 然后使用 filter 过滤不属于全连接层的参数，也就是保留卷积层的参数
-    feature_params = filter(lambda p: id(p) not in fc_params_id, resnet18_ft.parameters())
+    feature_params = filter(
+        lambda p: id(p) not in fc_params_id, resnet18_ft.parameters()
+    )
     # 设置优化器的分组学习率，传入一个 list，包含 2 个字典元素。对应 2 个参数组
-    optimizer = optim.SGD([{'params': feature_params, 'lr': LR * 0.1},
-                           {'params': resnet18_ft.fc.parameters()}],
-                          lr=LR, momentum=0.9)
+    optimizer = optim.SGD(
+        [
+            {"params": feature_params, "lr": LR * 0.1},
+            {"params": resnet18_ft.fc.parameters()},
+        ],
+        lr=LR,
+        momentum=0.9,
+    )
 
 else:
     optimizer = optim.SGD(resnet18_ft.parameters(), lr=LR, momentum=0.9)  # 选择优化器
 
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=lr_decay_step, gamma=0.1)  # 设置学习率下降策略
+scheduler = torch.optim.lr_scheduler.StepLR(
+    optimizer, step_size=lr_decay_step, gamma=0.1
+)  # 设置学习率下降策略
 
 # ============================ step 5/5 训练 ============================
 train_curve = list()
@@ -118,9 +131,9 @@ valid_curve = list()
 
 for epoch in range(start_epoch + 1, MAX_EPOCH):
 
-    loss_mean = 0.
-    correct = 0.
-    total = 0.
+    loss_mean = 0.0
+    correct = 0.0
+    total = 0.0
 
     resnet18_ft.train()
     for i, batch_data in enumerate(train_loader):
@@ -148,9 +161,17 @@ for epoch in range(start_epoch + 1, MAX_EPOCH):
         train_curve.append(loss.item())
         if (i + 1) % log_interval == 0:
             loss_mean = loss_mean / log_interval  # 每 10 个batch打印一次 loss 信息
-            print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}]\tLoss mean: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, i + 1, len(train_loader), loss_mean, correct / total))
-            loss_mean = 0.
+            print(
+                "Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}]\tLoss mean: {:.4f} Acc:{:.2%}".format(
+                    epoch,
+                    MAX_EPOCH,
+                    i + 1,
+                    len(train_loader),
+                    loss_mean,
+                    correct / total,
+                )
+            )
+            loss_mean = 0.0
 
             # if flag_m1:
             # print("epoch:{} conv1.weights[0, 0, ...] :\n {}".format(epoch, resnet18_ft.conv1.weight[0, 0, ...]))
@@ -160,9 +181,9 @@ for epoch in range(start_epoch + 1, MAX_EPOCH):
     # validate the model
     if (epoch + 1) % val_interval == 0:
         # 每个 epoch 都用验证集测试一下
-        loss_val = 0.
-        correct_val = 0.
-        total_val = 0.
+        loss_val = 0.0
+        correct_val = 0.0
+        total_val = 0.0
 
         resnet18_ft.eval()
         with torch.no_grad():  # 不用存储反向传播时需要的cache信息，节省显存
@@ -180,22 +201,31 @@ for epoch in range(start_epoch + 1, MAX_EPOCH):
 
             loss_val_mean = loss_val / len(valid_loader)
             valid_curve.append(loss_val_mean)
-            print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}]\tLoss mean: {:.4f} Acc:{:.2%}".format(
-                epoch, MAX_EPOCH, j + 1, len(valid_loader), loss_val_mean, correct_val / total_val))
+            print(
+                "Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}]\tLoss mean: {:.4f} Acc:{:.2%}".format(
+                    epoch,
+                    MAX_EPOCH,
+                    j + 1,
+                    len(valid_loader),
+                    loss_val_mean,
+                    correct_val / total_val,
+                )
+            )
         resnet18_ft.train()
 
 train_x = range(len(train_curve))
 train_y = train_curve
 
 train_iters = len(train_loader)
-valid_x = np.arange(1,
-                    len(valid_curve) + 1) * train_iters * val_interval  # 由于valid中记录的是epoch loss，需要对记录点进行转换到iterations
+valid_x = (
+    np.arange(1, len(valid_curve) + 1) * train_iters * val_interval
+)  # 由于valid中记录的是epoch loss，需要对记录点进行转换到iterations
 valid_y = valid_curve
 
-plt.plot(train_x, train_y, label='Train')
-plt.plot(valid_x, valid_y, label='Valid')
+plt.plot(train_x, train_y, label="Train")
+plt.plot(valid_x, valid_y, label="Valid")
 
-plt.legend(loc='upper right')
-plt.ylabel('loss value')
-plt.xlabel('Iteration')
+plt.legend(loc="upper right")
+plt.ylabel("loss value")
+plt.xlabel("Iteration")
 plt.show()

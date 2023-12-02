@@ -25,15 +25,16 @@ device = torch.device("cpu")
 
 # Read a file and split into lines
 def readLines(filename):
-    lines = open(filename, encoding='utf-8').read().strip().split('\n')
+    lines = open(filename, encoding="utf-8").read().strip().split("\n")
     return [unicodeToAscii(line) for line in lines]
 
 
 def unicodeToAscii(s):
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', s)
-        if unicodedata.category(c) != 'Mn'
-        and c in all_letters)
+    return "".join(
+        c
+        for c in unicodedata.normalize("NFD", s)
+        if unicodedata.category(c) != "Mn" and c in all_letters
+    )
 
 
 # Find letter index from all_letters, e.g. "a" = 0
@@ -68,10 +69,10 @@ def randomChoice(l):
 
 
 def randomTrainingExample():
-    category = randomChoice(all_categories)                 # 选类别
-    line = randomChoice(category_lines[category])           # 选一个样本
+    category = randomChoice(all_categories)  # 选类别
+    line = randomChoice(category_lines[category])  # 选一个样本
     category_tensor = torch.tensor([all_categories.index(category)], dtype=torch.long)
-    line_tensor = lineToTensor(line)    # str to one-hot
+    line_tensor = lineToTensor(line)  # str to one-hot
     return category, line, category_tensor, line_tensor
 
 
@@ -80,7 +81,7 @@ def timeSince(since):
     s = now - since
     m = math.floor(s / 60)
     s -= m * 60
-    return '%dm %ds' % (m, s)
+    return "%dm %ds" % (m, s)
 
 
 # Just return an output given a line
@@ -94,7 +95,7 @@ def evaluate(line_tensor):
 
 
 def predict(input_line, n_predictions=3):
-    print('\n> %s' % input_line)
+    print("\n> %s" % input_line)
     with torch.no_grad():
         output = evaluate(lineToTensor(input_line))
 
@@ -104,12 +105,13 @@ def predict(input_line, n_predictions=3):
         for i in range(n_predictions):
             value = topv[0][i].item()
             category_index = topi[0][i].item()
-            print('(%.2f) %s' % (value, all_categories[category_index]))
+            print("(%.2f) %s" % (value, all_categories[category_index]))
 
 
 def get_lr(iter, learning_rate):
-    lr_iter = learning_rate if iter < n_iters else learning_rate*0.1
+    lr_iter = learning_rate if iter < n_iters else learning_rate * 0.1
     return lr_iter
+
 
 class RNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -163,9 +165,9 @@ def train(category_tensor, line_tensor):
 
 if __name__ == "__main__":
     # config
-    path_txt = os.path.join(enviroments.names,"*.txt")
+    path_txt = os.path.join(enviroments.names, "*.txt")
     all_letters = string.ascii_letters + " .,;'"
-    n_letters = len(all_letters)    # 52 + 5 字符总数
+    n_letters = len(all_letters)  # 52 + 5 字符总数
     print_every = 5000
     plot_every = 5000
     learning_rate = 0.005
@@ -211,9 +213,12 @@ if __name__ == "__main__":
         # Print iter number, loss, name and guess
         if iter % print_every == 0:
             guess, guess_i = categoryFromOutput(output)
-            correct = '✓' if guess == category else '✗ (%s)' % category
-            print('Iter: {:<7} time: {:>8s} loss: {:.4f} name: {:>10s}  pred: {:>8s} label: {:>8s}'.format(
-                iter, timeSince(start), loss, line, guess, correct))
+            correct = "✓" if guess == category else "✗ (%s)" % category
+            print(
+                "Iter: {:<7} time: {:>8s} loss: {:.4f} name: {:>10s}  pred: {:>8s} label: {:>8s}".format(
+                    iter, timeSince(start), loss, line, guess, correct
+                )
+            )
 
         # Add current loss avg to list of losses
         if iter % plot_every == 0:
@@ -224,11 +229,8 @@ torch.save(rnn.state_dict(), path_model)
 plt.plot(all_losses)
 plt.show()
 
-predict('Yue Tingsong')
-predict('Yue tingsong')
-predict('yutingsong')
+predict("Yue Tingsong")
+predict("Yue tingsong")
+predict("yutingsong")
 
-predict('test your name')
-
-
-
+predict("test your name")

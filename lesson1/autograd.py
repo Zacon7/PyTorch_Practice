@@ -8,8 +8,9 @@ torch.manual_seed(10)
 # flag = True
 flag = False
 if flag:
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
+
     # y=(x+w)*(w+1)
     a = torch.add(w, x)
     b = torch.add(w, 1)
@@ -18,6 +19,7 @@ if flag:
     # 第一次求导，设置 retain_graph=True，保留计算图
     y.backward(retain_graph=True)
     print(w.grad)
+
     # 第二次求导成功
     y.backward()
     print(w.grad)
@@ -26,8 +28,8 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
 
     a = torch.add(w, x)
     b = torch.add(w, 1)
@@ -38,9 +40,10 @@ if flag:
     # 把两个 loss 拼接都到一起
     loss = torch.cat([y0, y1], dim=0)  # [y0, y1]
     # 设置两个 loss 的权重: y0 的权重是 1，y1 的权重是 2
-    grad_tensors = torch.tensor([1., 2.])
+    grad_tensors = torch.tensor([1.0, 2.0])
 
-    loss.backward(gradient=grad_tensors)  # gradient 传入 torch.autograd.backward()中的grad_tensors
+    # gradient 传入 torch.autograd.backward()中的grad_tensors
+    loss.backward(gradient=grad_tensors)
     # 最终的 w 的导数由两部分组成。∂y0/∂w * 1 + ∂y1/∂w * 2
     print(w.grad)
 
@@ -48,11 +51,15 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    x = torch.tensor([3.], requires_grad=True)
+    x = torch.tensor([3.0], requires_grad=True)
     y = torch.pow(x, 2)  # y = x**2
+
     # 如果需要求 2 阶导，需要设置 create_graph=True，让一阶导数 grad_1 也拥有计算图
-    grad_1 = torch.autograd.grad(y, x, create_graph=True)  # grad_1 = dy/dx = 2x = 2 * 3 = 6
+    grad_1 = torch.autograd.grad(
+        y, x, create_graph=True
+    )  # grad_1 = dy/dx = 2x = 2 * 3 = 6
     print(grad_1)
+
     # 这里求 2 阶导，torch.autograd.grad()的返回结果是一个tuple，需要取出第 0 个元素才是真正的梯度变量 2x
     grad_2 = torch.autograd.grad(grad_1[0], x)  # grad_2 = d(dy/dx)/dx = d(2x)/dx = 2
     print(grad_2)
@@ -62,8 +69,9 @@ if flag:
 flag = False
 if flag:
 
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
+
     # 进行 4 次反向传播求导，每次最后都没有清零
     for i in range(4):
         a = torch.add(w, x)
@@ -78,8 +86,8 @@ if flag:
 # flag = True
 flag = False
 if flag:
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
     # y = (x + w) * (w + 1)
     a = torch.add(w, x)
     b = torch.add(w, 1)
@@ -106,8 +114,8 @@ if flag:
 flag = True
 # flag = False
 if flag:
-    w = torch.tensor([1.], requires_grad=True)
-    x = torch.tensor([2.], requires_grad=True)
+    w = torch.tensor([1.0], requires_grad=True)
+    x = torch.tensor([2.0], requires_grad=True)
     # y = (x + w) * (w + 1)
     a = torch.add(w, x)
     b = torch.add(w, 1)

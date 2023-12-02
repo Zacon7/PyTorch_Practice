@@ -18,8 +18,12 @@ if flag:
     features_shape = (3, 4)
 
     feature_map = torch.ones(features_shape)  # 2D
-    feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 3D
-    feature_maps_bs = torch.stack([feature_maps for i in range(batch_size)], dim=0)  # 4D
+    feature_maps = torch.stack(
+        [feature_map * (i + 1) for i in range(num_features)], dim=0
+    )  # 3D
+    feature_maps_bs = torch.stack(
+        [feature_maps for i in range(batch_size)], dim=0
+    )  # 4D
 
     # feature_maps_bs shape is [8, 6, 3, 4],  B * C * H * W
     # ln = nn.LayerNorm(feature_maps_bs.size()[1:], elementwise_affine=True)
@@ -46,8 +50,12 @@ if flag:
     features_shape = (2, 2)
 
     feature_map = torch.ones(features_shape)  # 2D
-    feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 3D
-    feature_maps_bs = torch.stack([feature_maps for i in range(batch_size)], dim=0)  # 4D
+    feature_maps = torch.stack(
+        [feature_map * (i + 1) for i in range(num_features)], dim=0
+    )  # 3D
+    feature_maps_bs = torch.stack(
+        [feature_maps for i in range(batch_size)], dim=0
+    )  # 4D
 
     print("Instance Normalization")
     print("input data:\n{} shape is {}".format(feature_maps_bs, feature_maps_bs.shape))
@@ -69,8 +77,12 @@ if flag:
     features_shape = (2, 2)
 
     feature_map = torch.ones(features_shape)  # 2D
-    feature_maps = torch.stack([feature_map * (i + 1) for i in range(num_features)], dim=0)  # 3D
-    feature_maps_bs = torch.stack([feature_maps * (i + 1) for i in range(batch_size)], dim=0)  # 4D
+    feature_maps = torch.stack(
+        [feature_map * (i + 1) for i in range(num_features)], dim=0
+    )  # 3D
+    feature_maps_bs = torch.stack(
+        [feature_maps * (i + 1) for i in range(batch_size)], dim=0
+    )  # 4D
 
     gn = nn.GroupNorm(num_groups, num_features)
     outputs = gn(feature_maps_bs)

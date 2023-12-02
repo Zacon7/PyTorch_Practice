@@ -14,7 +14,7 @@ def func(x_t):
 
 
 # init
-x = torch.tensor([2.], requires_grad=True)
+x = torch.tensor([2.0], requires_grad=True)
 
 # ------------------------------ plot data ------------------------------
 flag = 0
@@ -42,8 +42,11 @@ if flag:
         y = func(x)
         y.backward()
 
-        print("Iter:{},\t X:{:8},\t X.grad:{:8},\t loss:{:10}".format(
-            i, x.detach().numpy()[0], x.grad.detach().numpy()[0], y.item()))
+        print(
+            "Iter:{},\t X:{:8},\t X.grad:{:8},\t loss:{:10}".format(
+                i, x.detach().numpy()[0], x.grad.detach().numpy()[0], y.item()
+            )
+        )
 
         x_rec.append(x.item())
 
@@ -53,7 +56,7 @@ if flag:
         iter_rec.append(i)
         loss_rec.append(y)
 
-    plt.subplot(121).plot(iter_rec, loss_rec, '-ro')
+    plt.subplot(121).plot(iter_rec, loss_rec, "-ro")
     plt.xlabel("Iteration")
     plt.ylabel("Loss value")
 
@@ -61,7 +64,7 @@ if flag:
     y = func(x_t)
     plt.subplot(122).plot(x_t.numpy(), y.numpy(), label="y = 4*x^2")
     y_rec = [func(torch.tensor(i)).item() for i in x_rec]
-    plt.subplot(122).plot(x_rec, y_rec, '-ro')
+    plt.subplot(122).plot(x_rec, y_rec, "-ro")
     plt.grid()
     plt.legend()
     plt.show()
@@ -79,7 +82,7 @@ if flag:
     loss_rec = [[] for _ in range(len(lr_list))]
 
     for i, lr in enumerate(lr_list):
-        x = torch.tensor([2.], requires_grad=True)
+        x = torch.tensor([2.0], requires_grad=True)
         for _ in range(iteration):
             y = func(x)
             y.backward()
@@ -90,8 +93,8 @@ if flag:
 
     for i, loss_r in enumerate(loss_rec):
         plt.plot(range(iteration), loss_r, label="LR: {}".format(lr_list[i]))
-    plt.xlabel('Iterations')
-    plt.ylabel('Loss value')
+    plt.xlabel("Iterations")
+    plt.ylabel("Loss value")
     plt.legend()
     plt.grid()
     plt.show()

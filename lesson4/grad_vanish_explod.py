@@ -14,7 +14,9 @@ set_seed(1)  # 设置随机种子
 class MLP(nn.Module):
     def __init__(self, unit_nums, layer_nums):
         super().__init__()
-        self.linears = nn.ModuleList([nn.Linear(unit_nums, unit_nums, bias=False) for i in range(layer_nums)])
+        self.linears = nn.ModuleList(
+            [nn.Linear(unit_nums, unit_nums, bias=False) for i in range(layer_nums)]
+        )
         self.unit_nums = unit_nums
 
     def forward(self, x):
@@ -77,7 +79,7 @@ if flag:
     out = torch.tanh(x)
 
     gain = x.std() / out.std()
-    print('gain:{}'.format(gain))
+    print("gain:{}".format(gain))
 
-    tanh_gain = nn.init.calculate_gain('tanh')
-    print('tanh_gain in PyTorch:', tanh_gain)
+    tanh_gain = nn.init.calculate_gain("tanh")
+    print("tanh_gain in PyTorch:", tanh_gain)
